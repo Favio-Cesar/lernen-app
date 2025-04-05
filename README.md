@@ -30,8 +30,7 @@
 
 ### DevOps / CI
 - ESLint + Prettier + Husky
-- Git Flow
-- Arquitectura basada en AWS (en desarrollo)
+- GitHub Flow
 
 ---
 
