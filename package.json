@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "LERNEN-IO",
   "private": true,
   "scripts": {
     "build": "turbo run build",
