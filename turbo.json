@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".output/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -13,9 +13,20 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
+    "desktop:build": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "outputs": ["apps/desktop/dist/**"]
+
+    },
     "dev": {
+      "dependsOn": ["^dev"],
       "cache": false,
       "persistent": true
+    },
+    "sync": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

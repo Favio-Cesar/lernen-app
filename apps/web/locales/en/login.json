@@ -1,0 +1,5 @@
+{
+    "phrase":"Your modern learning platform",
+    "formTitle":{"login":"Login","register":"Register"},
+    "fields":{"username":"Username","email":"Email","password":"Password","confirmPassword":"Confirm Password","phone":"Phone","city":"City"}
+}
