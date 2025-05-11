@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxt/scripts",
   ],
+
   css: ["@/assets/styles/main.scss"],
   vite: {
     css: {
@@ -35,6 +36,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       STRAPI_URL: process.env.STRAPI_URL,
+      STRAPI_TOKEN: process.env.STRAPI_TOKEN,
     },
   },
 });

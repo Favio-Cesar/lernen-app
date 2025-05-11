@@ -1,139 +1,188 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, computed } from "vue";
+
+const config = useRuntimeConfig();
+
+const { data: fieldsRaw } = await $fetch(
+  `${config.public.STRAPI_URL}/api/fields-of-studies?populate=bookCover`,
+  {
+    headers: {
+      Authorization: `Bearer ${config.public.STRAPI_TOKEN}`,
+    },
+  }
+);
+
+const expandedCard = ref<number | null>(null);
+const searchQuery = ref("");
+
+const toggleExpand = (index: number) => {
+  expandedCard.value = expandedCard.value === index ? null : index;
+};
+
+const filteredFields = computed(() => {
+  return fieldsRaw?.filter((field: unknown) =>
+    field.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+</script>
 
 <template>
-  <div>
-    <div class="loader loader--style8" title="7">
-      <svg
-        version="1.1"
-        id="Layer_1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        x="0px"
-        y="0px"
-        width="24px"
-        height="30px"
-        viewBox="0 0 24 30"
-        style="enable-background: new 0 0 50 50"
-        xml:space="preserve"
+  <section v-if="filteredFields" class="fields-container">
+    <h1>Fields of Study</h1>
+    <p class="subtitle">
+      Explore the fields of study available in our platform.
+    </p>
+
+    <input
+      v-model="searchQuery"
+      class="search-bar"
+      type="text"
+      placeholder="Search by title..."
+    />
+
+    <TransitionGroup name="card" tag="div" class="card-grid">
+      <div
+        v-for="(field, index) in filteredFields"
+        :key="field.id"
+        class="card"
+        :class="{ expanded: expandedCard === index }"
+        @click="toggleExpand(index)"
       >
-        <rect x="0" y="10" width="4" height="10" fill="#333" opacity="0.2">
-          <animate
-            attributeName="opacity"
-            attributeType="XML"
-            values="0.2; 1; .2"
-            begin="0s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="height"
-            attributeType="XML"
-            values="10; 20; 10"
-            begin="0s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="y"
-            attributeType="XML"
-            values="10; 5; 10"
-            begin="0s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-        </rect>
-        <rect x="8" y="10" width="4" height="10" fill="#333" opacity="0.2">
-          <animate
-            attributeName="opacity"
-            attributeType="XML"
-            values="0.2; 1; .2"
-            begin="0.15s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="height"
-            attributeType="XML"
-            values="10; 20; 10"
-            begin="0.15s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="y"
-            attributeType="XML"
-            values="10; 5; 10"
-            begin="0.15s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-        </rect>
-        <rect x="16" y="10" width="4" height="10" fill="#333" opacity="0.2">
-          <animate
-            attributeName="opacity"
-            attributeType="XML"
-            values="0.2; 1; .2"
-            begin="0.3s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="height"
-            attributeType="XML"
-            values="10; 20; 10"
-            begin="0.3s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="y"
-            attributeType="XML"
-            values="10; 5; 10"
-            begin="0.3s"
-            dur="0.6s"
-            repeatCount="indefinite"
-          />
-        </rect>
-      </svg>
-    </div>
-  </div>
+        <MoreBooksIcon
+          :book="{
+            image: `${config.public.STRAPI_URL}${field.bookCover.url}`,
+          }"
+        />
+
+        <div class="card-body">
+          <h3>{{ field.title }}</h3>
+          <div class="description-wrapper">
+            <p class="description">
+              {{ field.description?.[0]?.children?.[0]?.text }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </TransitionGroup>
+  </section>
+
+  <IconsLoadingIcon v-else />
 </template>
 
 <style lang="scss" scoped>
-body {
-  padding: 1em;
-  background: #2b3134;
-  color: #777;
-  text-align: center;
-  font-family: "Gill sans", sans-serif;
-  width: 80%;
+.fields-container {
+  max-width: 1200px;
   margin: 0 auto;
-}
-h1 {
-  margin: 1em 0;
-  border-bottom: 1px dashed;
-  padding-bottom: 1em;
-  font-weight: lighter;
-}
-p {
-  font-style: italic;
-}
-.loader {
-  margin: 0 0 2em;
-  height: 100px;
-  width: 20%;
-  text-align: center;
-  padding: 1em;
-  margin: 0 auto 1em;
-  display: inline-block;
-  vertical-align: top;
+  padding: 3rem 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: #dcdcdc;
+    margin-bottom: 1rem;
+  }
+
+  .search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0 2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #ffffff22;
+    color: #fff;
+
+    &::placeholder {
+      color: #cccccc;
+    }
+  }
 }
 
-/*
-  Set the color of the icon
-*/
-svg path,
-svg rect {
-  fill: #ff6700;
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.5rem;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.5rem;
+  align-items: start; // <- importante para que no se alineen todas por el centro
+}
+
+.card {
+  background-color: #1a1a1a;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 350px; // <- fuerza una altura mínima común (ajusta según el contenido base)
+  position: relative; // <- si quieres agregar sombra interna o posición absoluta luego
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .card-body {
+    width: 100%;
+    padding: 1.5rem;
+    background: #ffffff11;
+    text-align: center;
+    transition: background 0.3s ease;
+
+    h3 {
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .description-wrapper {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .description {
+      font-size: 1rem;
+      color: #e2e2e2;
+      line-height: 1.5;
+      margin-top: 0.5rem;
+      white-space: pre-wrap;
+    }
+  }
+
+  &.expanded .card-body .description-wrapper {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 1rem;
+  }
+}
+.card-enter-active,
+.card-leave-active {
+  transition: all 0.3s ease;
+}
+
+.card-enter-from,
+.card-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.card-enter-to,
+.card-leave-from {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>

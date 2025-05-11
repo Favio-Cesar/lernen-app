@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from "vue";
-
 import NavBar from "~/components/layout/elements/NavBar.vue";
 import NavBarDown from "~/components/layout/elements/NavBarDown.vue";
 import SuperNavBar from "~/components/layout/elements/SuperNavBar.vue";
 
 const isMenuOpen = ref(false);
 </script>
+
 <template>
   <div>
     <nav class="navbar navbar-mainbg">
@@ -14,18 +14,27 @@ const isMenuOpen = ref(false);
         class="navbar navbar-collapse navbarSupportedContent"
         :class="{ show: isMenuOpen }"
       >
+        <SuperNavBar
+          :items="[
+            { path: 'workbook', title: 'Workbook', icon: 'fas fa-book' },
+            { path: 'resources', title: 'Resources', icon: 'fas fa-box-open' },
+          ]"
+          :base-path="basePath"
+          is-sub-nav
+          inverted
+        />
         <NavBar />
-        <NavBarDown />
+        <!-- <NavBarDown />
 
         <SuperNavBar
           :items="[
             { path: 'workbook', title: 'Workbook', icon: 'fas fa-book' },
             { path: 'resources', title: 'Resources', icon: 'fas fa-box-open' },
           ]"
-          base-path="/maths"
+          :base-path="basePath"
           is-sub-nav
           inverted
-        />
+        /> -->
       </div>
     </nav>
 

@@ -1,15 +1,90 @@
+/* Importa una fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
+/* RESET BÁSICO MODERNO + SCROLL */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+html,
 body {
-    font-family: 'Roboto', sans-serif;
-  }
-  
-  * {
-    margin: 0;
-    padding: 0;
-    /* color: $font__color--dark; */
-  }
-  
-  i {
-    margin-right: 10px;
-  }
-  
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+  background-color: #111827;
+  color: #e5e7eb;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tipografía y elementos base */
+body,
+input,
+button,
+textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+i {
+  margin-right: 10px;
+}
+
+/* SCROLLBAR MODERNA Y MINIMALISTA */
+
+/* Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2); // Translúcido
+  border-radius: 999px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
