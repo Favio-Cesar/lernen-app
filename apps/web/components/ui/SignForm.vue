@@ -1,35 +1,34 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { z } from "zod";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { ref, computed } from 'vue'
+import { z } from 'zod'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const props = defineProps<{
-  mode: "login" | "signup";
-}>();
+  mode: 'login' | 'signup'
+}>()
 
-const username = ref("");
-const email = ref("");
-const password = ref("");
+const username = ref('')
+const email = ref('')
+const password = ref('')
 
-// 👇 Cambiado a array de strings
-const errorMessages = ref<string[]>([]);
+const errorMessages = ref<string[]>([])
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
 
 const signUpSchema = z.object({
-  email: z.string().email("Valid email is required"),
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+  email: z.string().email('Valid email is required'),
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
 
-const isLogin = computed(() => props.mode === "login");
+const isLogin = computed(() => props.mode === 'login')
 
 const handleSubmit = async (e: Event) => {
-  e.preventDefault();
-  errorMessages.value = [];
+  e.preventDefault()
+  errorMessages.value = []
 
   const result = isLogin.value
     ? loginSchema.safeParse({
@@ -40,16 +39,16 @@ const handleSubmit = async (e: Event) => {
         email: email.value,
         username: username.value,
         password: password.value,
-      });
+      })
 
   if (!result.success) {
-    errorMessages.value = result.error.errors.map((err) => err.message);
-    return;
+    errorMessages.value = result.error.errors.map((err) => err.message)
+    return
   }
 
   const endpoint = isLogin.value
-    ? "http://localhost:1337/api/auth/local"
-    : "http://localhost:1337/api/auth/local/register";
+    ? 'http://localhost:1337/api/auth/local'
+    : 'http://localhost:1337/api/auth/local/register'
 
   const payload = isLogin.value
     ? {
@@ -60,36 +59,36 @@ const handleSubmit = async (e: Event) => {
         username: username.value,
         email: email.value,
         password: password.value,
-      };
+      }
 
   try {
     const response = await fetch(endpoint, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    });
+    })
 
-    const data = await response.json();
+    const data = await response.json()
 
     if (!response.ok) {
-      throw new Error(data.error?.message || "Authentication failed");
+      throw new Error(data.error?.message || 'Authentication failed')
     }
 
-    localStorage.setItem("jwt", data.jwt);
-    router.push("/"); // Redirige al home tras la autenticación exitosa
+    localStorage.setItem('jwt', data.jwt)
+    router.push('/')
   } catch (err: unknown) {
     errorMessages.value = [
-      err instanceof Error ? err.message : "An unknown error occurred",
-    ];
+      err instanceof Error ? err.message : 'An unknown error occurred',
+    ]
   }
-};
+}
 </script>
 
 <template>
   <form @submit="handleSubmit">
-    <h1>{{ isLogin ? "Sign In" : "Sign Up" }}</h1>
+    <h1>{{ isLogin ? 'Sign In' : 'Sign Up' }}</h1>
 
     <div class="social-container">
       <a href="#" class="social"><i class="fab fa-facebook-f" /></a>
@@ -132,7 +131,7 @@ const handleSubmit = async (e: Event) => {
     </ul>
 
     <a href="#" v-if="isLogin">Forgot your password? 🤔</a>
-    <button type="submit">{{ isLogin ? "Sign In" : "Sign Up" }}</button>
+    <button type="submit">{{ isLogin ? 'Sign In' : 'Sign Up' }}</button>
   </form>
 </template>
 

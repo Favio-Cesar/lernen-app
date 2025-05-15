@@ -1,12 +1,12 @@
-require("dotenv").config({ path: __dirname + "/../.env" }); // <-- esto asegura que lo encuentre desde cualquier ruta
+require('dotenv').config({ path: __dirname + '/../.env' })
 
-const { exec } = require("child_process");
+const { exec } = require('child_process')
 
-const userProfile = process.env.USERPROFILE;
+const userProfile = process.env.USERPROFILE
 
 if (!userProfile) {
-  console.error("USERPROFILE no está definido. Abortando...");
-  process.exit(1);
+  console.error('USERPROFILE no está definido. Abortando...')
+  process.exit(1)
 }
 
 exec(
@@ -14,15 +14,15 @@ exec(
   {
     env: {
       ...process.env,
-      USERPROFILE: userProfile, // asegurar que esté definido
+      USERPROFILE: userProfile,
     },
   },
   (err, stdout, stderr) => {
     if (err) {
-      console.error("Error al iniciar Ollama:", err);
-      return;
+      console.error('Error al iniciar Ollama:', err)
+      return
     }
-    console.log(stdout);
-    console.error(stderr);
-  }
-);
+    console.log(stdout)
+    console.error(stderr)
+  },
+)

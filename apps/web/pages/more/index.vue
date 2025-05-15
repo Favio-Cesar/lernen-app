@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue'
 
-const config = useRuntimeConfig();
+const config = useRuntimeConfig()
 
 const { data: fieldsRaw } = await $fetch(
   `${config.public.STRAPI_URL}/api/fields-of-studies?populate=bookCover`,
@@ -9,29 +9,27 @@ const { data: fieldsRaw } = await $fetch(
     headers: {
       Authorization: `Bearer ${config.public.STRAPI_TOKEN}`,
     },
-  }
-);
+  },
+)
 
-const expandedCard = ref<number | null>(null);
-const searchQuery = ref("");
+const expandedCard = ref<number | null>(null)
+const searchQuery = ref('')
 
 const toggleExpand = (index: number) => {
-  expandedCard.value = expandedCard.value === index ? null : index;
-};
+  expandedCard.value = expandedCard.value === index ? null : index
+}
 
 const filteredFields = computed(() => {
   return fieldsRaw?.filter((field: unknown) =>
-    field.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-});
+    field.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
+  )
+})
 </script>
 
 <template>
   <section v-if="filteredFields" class="fields-container">
     <h1>Fields of Study</h1>
-    <p class="subtitle">
-      Explore the fields of study available in our platform.
-    </p>
+    <p class="subtitle">Explore the fields of study available in our platform.</p>
 
     <input
       v-model="searchQuery"
@@ -114,7 +112,7 @@ const filteredFields = computed(() => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2.5rem;
-  align-items: start; // <- importante para que no se alineen todas por el centro
+  align-items: start;
 }
 
 .card {
@@ -127,8 +125,8 @@ const filteredFields = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 350px; // <- fuerza una altura mínima común (ajusta según el contenido base)
-  position: relative; // <- si quieres agregar sombra interna o posición absoluta luego
+  min-height: 350px;
+  position: relative;
 
   &:hover {
     transform: translateY(-5px);

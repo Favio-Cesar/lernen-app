@@ -1,4 +1,3 @@
-// commitlint.config.js
 export const commitLintFront = {
   /*
    * Resolve and load @commitlint/config-conventional from node_modules.

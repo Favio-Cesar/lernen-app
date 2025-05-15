@@ -1,5 +1,3 @@
-// eslint.config.js
-import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
 import prettier from 'eslint-plugin-prettier'
 import vueParser from 'vue-eslint-parser'
@@ -12,7 +10,6 @@ const RULES = {
 }
 
 export default [
-  // 🔸 Config global para archivos JS comunes fuera de apps/
   {
     files: ['apps/web/**/*.{ts,tsx,js,jsx,vue}'],
     languageOptions: {
@@ -27,7 +24,6 @@ export default [
     },
   },
 
-  // 🔸 Config principal con TS y Vue, solo aplicada a apps/web
   {
     files: ['apps/web/**/*.{ts,tsx,js,jsx,vue}'],
     languageOptions: {
