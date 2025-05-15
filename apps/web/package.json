@@ -20,7 +20,6 @@
     "@unhead/vue": "^2.0.8",
     "change-case": "^5.0.0",
     "codemirror": "^6.0.0",
-    "eslint": "^9.26.0",
     "nuxt": "^3.17.1",
     "typescript": "^5.3.0",
     "vue": "^3.5.13",
@@ -29,7 +28,17 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@vitest/ui": "^3.1.3",
+    "commitlint": "^19.8.1",
+    "eslint": "^9.26.0",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.5.3",
     "sass-embedded": "^1.87.0",
+    "vitest": "^3.1.3",
     "vue-i18n": "^11.1.3"
   }
 }
