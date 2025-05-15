@@ -10,9 +10,9 @@ const props = defineProps<{
 const username = ref('')
 const email = ref('')
 const password = ref('')
-
 const errorMessages = ref<string[]>([])
 
+const isLogin = computed(() => props.mode === 'login')
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -23,8 +23,6 @@ const signUpSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 })
-
-const isLogin = computed(() => props.mode === 'login')
 
 const handleSubmit = async (e: Event) => {
   e.preventDefault()
@@ -113,7 +111,7 @@ const handleSubmit = async (e: Event) => {
       </a>
     </div>
 
-    <span v-if="!isLogin">or use your email to register</span>
+    <span>{{ isLogin ? 'or use your account' : 'or use your email to register' }}</span>
 
     <input
       v-if="!isLogin"
@@ -121,6 +119,7 @@ const handleSubmit = async (e: Event) => {
       type="email"
       placeholder="📧 Email"
       autocomplete="email"
+      required
     />
 
     <input
@@ -128,6 +127,7 @@ const handleSubmit = async (e: Event) => {
       type="text"
       placeholder="👤 Username"
       autocomplete="username"
+      required
     />
 
     <input
@@ -135,13 +135,10 @@ const handleSubmit = async (e: Event) => {
       type="password"
       placeholder="🔒 Password"
       autocomplete="current-password"
+      required
     />
 
-    <!-- ✅ Aquí renderizamos cada mensaje de error individualmente -->
-    <ul
-      v-if="errorMessages"
-      style="color: red; font-size: 0.9em; margin: 5px 0; padding-left: 1em"
-    >
+    <ul v-if="errorMessages.length" class="error-list">
       <li v-for="(message, index) in errorMessages" :key="index">
         {{ message }}
       </li>
@@ -168,7 +165,13 @@ const handleSubmit = async (e: Event) => {
 }
 .social-container a:hover {
   background-color: #eee;
-  color: #ff4b2b;
+  color: #00dc82;
   border-color: transparent;
+}
+.error-list {
+  color: red;
+  font-size: 0.9em;
+  margin: 5px 0;
+  padding-left: 1em;
 }
 </style>
