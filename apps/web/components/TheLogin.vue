@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
-const containerRef = ref<HTMLElement | null>(null);
+import { ref } from 'vue'
+const containerRef = ref<HTMLElement | null>(null)
 const handleSignUp = () => {
-  containerRef.value?.classList.add("right-panel-active");
-};
+  containerRef.value?.classList.add('right-panel-active')
+}
 const handleSignIn = () => {
-  containerRef.value?.classList.remove("right-panel-active");
-};
+  containerRef.value?.classList.remove('right-panel-active')
+}
 </script>
 <template>
   <div>
@@ -26,35 +26,30 @@ const handleSignIn = () => {
         <div class="overlay">
           <!-- Overlay Left Panel -->
           <div class="overlay-panel overlay-left">
-            <h1>Welcome Back! 🎉</h1>
-            <p>
-              To keep connected with us please login with your personal info
-            </p>
-            <button class="ghost" @click="handleSignIn">Sign In</button>
+            <h1>Don't have an account?</h1>
+            <p>Sign up to our page and get a personalised experience!</p>
+            <button class="ghost" @click="handleSignIn">Sign Up</button>
           </div>
 
           <!-- Overlay Right Panel -->
           <div class="overlay-panel overlay-right">
-            <h1>Hello, Friend! ✨</h1>
-            <p>Enter your personal details and start your journey with us</p>
-            <button class="ghost" @click="handleSignUp">Sign Up</button>
+            <h1>Hello, Friend!</h1>
+            <p>To keep connected with us please login with your personal info</p>
+            <button class="ghost" @click="handleSignUp">Sign In</button>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="copyright">@copyright by dipesh</div>
   </div>
 </template>
 
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 h1 {
   font-weight: bold;
   margin: 0;
   font-size: 1.8em;
-  margin-bottom: 10px;
 }
 
 h1 span {
@@ -140,7 +135,7 @@ input {
   margin: 8px 0;
   width: 100%;
   border-radius: 5px;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 input:focus {
@@ -225,11 +220,12 @@ input:focus {
 }
 
 .overlay-left {
+  left: 4.6rem;
   transform: translateX(0%);
 }
 
 .overlay-right {
-  right: 0;
+  right: 2rem;
   transform: translateX(0%);
 }
 
