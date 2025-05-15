@@ -1,76 +1,75 @@
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
-import { useRoute } from "#app";
-import { useI18n } from "vue-i18n";
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRoute } from '#app'
+import { useI18n } from 'vue-i18n'
 
-const { t, locale } = useI18n();
-const route = useRoute();
-const isMenuOpen = ref(false);
-const activeIndex = ref(1);
+const { t, locale } = useI18n()
+const route = useRoute()
+const isMenuOpen = ref(false)
+const activeIndex = ref(1)
 
 const navItems = ref([
-  { path: "/maths", title: t("maths"), icon: "fas fa-square-root-alt" },
-  { path: "/physics", title: t("physics"), icon: "fas fa-atom" },
+  { path: '/maths', title: t('maths'), icon: 'fas fa-square-root-alt' },
+  { path: '/physics', title: t('physics'), icon: 'fas fa-atom' },
 
-  { path: "/more", title: t("more"), icon: "fa fa-plus" },
-]);
+  { path: '/more', title: t('more'), icon: 'fa fa-plus' },
+])
 
 const selectorStyle = reactive({
-  top: "0",
-  left: "0",
+  top: '0',
+  left: '0',
 
-  width: "0",
-});
+  width: '0',
+})
 
 const isActive = (path) => {
-  return route.path === path;
-};
+  return route.path === path
+}
 
 const updateSelector = () => {
-  const activeElement = document.querySelector(".nav-item.active");
-  const navbar = document.querySelector(".navbar-nav"); // Elemento padre contenedor
+  const activeElement = document.querySelector('.nav-item.active')
+  const navbar = document.querySelector('.navbar-nav')
 
   if (activeElement && navbar) {
-    const navRect = navbar.getBoundingClientRect();
-    const activeRect = activeElement.getBoundingClientRect();
+    const navRect = navbar.getBoundingClientRect()
+    const activeRect = activeElement.getBoundingClientRect()
 
     Object.assign(selectorStyle, {
       top: `${activeRect.top - navRect.top}px`,
       left: `${activeRect.left - navRect.left}px`,
 
       width: `${activeElement.offsetWidth}px`,
-    });
+    })
   }
-};
+}
 const setActive = (index) => {
-  activeIndex.value = index;
-  isMenuOpen.value = false;
-  updateSelector();
-};
+  activeIndex.value = index
+  isMenuOpen.value = false
+  updateSelector()
+}
 
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
+  isMenuOpen.value = !isMenuOpen.value
+}
 
 const handleResize = () => {
-  updateSelector();
+  updateSelector()
   if (window.innerWidth > 991) {
-    isMenuOpen.value = false;
+    isMenuOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  updateSelector();
-  window.addEventListener("resize", handleResize);
-});
+  updateSelector()
+  window.addEventListener('resize', handleResize)
+})
 
-// Actualizar selector cuando cambia la ruta
 watch(
   () => route.path,
   () => {
-    nextTick(updateSelector);
-  }
-);
+    nextTick(updateSelector)
+  },
+)
 </script>
 
 <template>
@@ -87,23 +86,18 @@ watch(
       @click="setActive(index)"
     >
       <NuxtLink class="nav-link" :to="item.path">
-        <i
-          :class="[item.icon]"
-          :style="{ color: isActive(item.path) ? 'black' : '' }"
-        />
-        <span
-          class="text"
-          :style="{ color: isActive(item.path) ? 'black' : '' }"
-          >{{ item.title }}</span
-        >
+        <i :class="[item.icon]" :style="{ color: isActive(item.path) ? 'black' : '' }" />
+        <span class="text" :style="{ color: isActive(item.path) ? 'black' : '' }">{{
+          item.title
+        }}</span>
       </NuxtLink>
     </li>
   </ul>
 </template>
 
 <style lang="scss" scoped>
-@import url("https://fonts.googleapis.com/css?family=Roboto");
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css");
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 .text {
   font-size: 15px;
   font-weight: 500;
@@ -113,7 +107,7 @@ watch(
   transition: all 0.5s ease;
 }
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   transition: all 0.7s;
 }
 
@@ -189,7 +183,7 @@ body {
   .right {
     right: -20px;
     &:before {
-      content: "";
+      content: '';
       position: absolute;
       width: 50px;
       height: 50px;
@@ -203,7 +197,7 @@ body {
   .left {
     left: -20px;
     &:before {
-      content: "";
+      content: '';
       position: absolute;
       width: 50px;
       height: 50px;
