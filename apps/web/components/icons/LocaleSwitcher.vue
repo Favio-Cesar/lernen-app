@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+const props = defineProps<{
+  size?: number | string
+}>()
 
 const { locale } = useI18n()
 
@@ -8,10 +11,21 @@ const currentLocale = computed(() => locale.value)
 function toggleLocale() {
   locale.value = locale.value === 'en' ? 'es' : 'en'
 }
-</script>
 
+// Tamaño en rem, por defecto 6
+const sizeRem = computed(() => {
+  if (!props.size) return '6rem'
+  // Si el prop es número, lo convertimos a rem, si es string, lo usamos tal cual
+  return typeof props.size === 'number' ? `${props.size}rem` : props.size
+})
+</script>
 <template>
-  <button class="locale-switcher" aria-label="Change language" @click="toggleLocale">
+  <button
+    class="locale-switcher"
+    aria-label="Change language"
+    :style="{ width: sizeRem, height: sizeRem }"
+    @click="toggleLocale"
+  >
     <span
       v-if="currentLocale === 'es'"
       class="fi fi-es locale-switcher__icon"
@@ -27,8 +41,7 @@ function toggleLocale() {
   border: none;
   cursor: pointer;
   padding: 0;
-  width: 3rem;
-  height: 3rem;
+  /* width y height se manejan desde style */
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -54,7 +67,6 @@ function toggleLocale() {
     border-radius: 50%;
     background-size: cover;
     transition: transform 0.3s ease;
-
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   }
 }

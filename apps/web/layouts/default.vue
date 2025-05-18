@@ -50,6 +50,7 @@ onBeforeUnmount(() => {
             inverted
           />
         </Transition>
+        <IconsLocaleSwitcher class="nav-link" size="2rem" />
       </div>
     </nav>
     <LayoutElementsMobileNavBar v-if="isMobile" />
@@ -106,18 +107,22 @@ onBeforeUnmount(() => {
 }
 .navbar {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4rem;
   min-height: fit-content;
   transition: all 0.5s ease;
 }
 .navbar-mainbg {
+  display: flex;
+  justify-content: space-evenly;
   background-color: $secondary-color-light;
-  padding: 0px;
+  padding: 0px 2rem;
 }
 .navbar-supported-content {
   overflow: hidden;
   position: relative;
-  padding: 0.2rem 2rem;
+  padding: 0rem 2rem;
   box-sizing: border-box;
 
   li {

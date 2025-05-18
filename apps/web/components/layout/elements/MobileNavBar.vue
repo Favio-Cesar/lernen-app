@@ -17,12 +17,6 @@ const { t, navItems, isMenuOpen, toggleMenu, closeMenu, shouldShowSelector } =
               <span>{{ item.longTitle }}</span>
             </NuxtLink>
           </li>
-          <li>
-            <NuxtLink to="/home" class="sub-link" @click="closeMenu">
-              <i class="fas fa-book"></i>
-              <span>{{ t('more') }}</span>
-            </NuxtLink>
-          </li>
         </ul>
         <Transition name="slide-fade">
           <ul v-if="shouldShowSelector" class="nav-sub">
@@ -40,14 +34,13 @@ const { t, navItems, isMenuOpen, toggleMenu, closeMenu, shouldShowSelector } =
             </li>
           </ul>
         </Transition>
-        <IconsLocaleSwitcher />
+        <IconsLocaleSwitcher size="6rem" />
       </div>
     </nav>
   </Transition>
 </template>
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+@use 'sass:color';
 /* Transición mejorada para móvil */
 .mobile-menu-enter-active,
 .mobile-menu-leave-active {
@@ -61,6 +54,9 @@ const { t, navItems, isMenuOpen, toggleMenu, closeMenu, shouldShowSelector } =
 $mobile-breakpoint: 991px;
 .nav-collapse {
   position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   top: 0;
   right: -100%;
   width: 80%;
@@ -139,6 +135,7 @@ $mobile-breakpoint: 991px;
   border-radius: 8px;
   padding: 0.5rem;
   margin-top: 0.5rem;
+  background-color: color.adjust($primary-color-lighter, $lightness: -5%);
 }
 
 /* Transiciones */
