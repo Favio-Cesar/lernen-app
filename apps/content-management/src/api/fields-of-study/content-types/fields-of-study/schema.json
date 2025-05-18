@@ -65,6 +65,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::block.block"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "fields_of_studies"
     }
   }
 }

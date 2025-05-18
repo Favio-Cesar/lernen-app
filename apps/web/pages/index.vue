@@ -1,18 +1,18 @@
 <script setup lang="ts">
-const config = useRuntimeConfig();
-const { data: categories } = await useAsyncData("categories", () =>
-  $fetch(`${config.public.STRAPI_URL}/api/categories`)
-);
-console.log(config.public.STRAPI_URL);
+import type { FieldOfStudy, StrapiResponse } from '~/interfaces/strapi/fields-of-studies'
+
+const { data: fieldsRaw } = await useStrapiFetch<StrapiResponse<FieldOfStudy>>(
+  'fields-of-studies?populate=bookCover',
+)
 </script>
 
 <template>
   <div>
     <h2>Categorías</h2>
-    <section v-if="categories?.data?.length">
-      <article v-for="item in categories.data" :key="item.id">
-        <h3>{{ item.name }}</h3>
-        <p>Slug: {{ item.slug }}</p>
+    <section v-if="fieldsRaw.length">
+      <article v-for="item in fieldsRaw" :key="item.id">
+        <h3>{{ item.title }}</h3>
+        <p>Slug: {{ item.publishedAt }}</p>
       </article>
     </section>
     <p v-else>No hay categorías</p>

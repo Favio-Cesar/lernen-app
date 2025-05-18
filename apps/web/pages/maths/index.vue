@@ -60,7 +60,7 @@ const scrollToBottom = () => {
 
 <template>
   <div class="chat-container">
-    <h2 class="title">💬 Chat de Matemáticas (IA)</h2>
+    <h2 class="title">Chat</h2>
 
     <div class="messages">
       <transition-group name="fade" tag="div">
@@ -74,7 +74,7 @@ const scrollToBottom = () => {
       </transition-group>
     </div>
 
-    <form @submit.prevent="sendMessage" class="form">
+    <form class="form" @submit.prevent="sendMessage">
       <input
         v-model="userInput"
         type="text"
@@ -93,30 +93,38 @@ const scrollToBottom = () => {
 
 .chat-container {
   font-family: 'Fira Code', monospace;
-  max-width: 700px;
+  max-width: 80vw;
+  height: 60vh;
   margin: 2rem auto;
   padding: 2rem;
-  background: #1e1e2f;
-  border-radius: 1rem;
-  box-shadow: 0 0 20px #00000033;
-  color: #e0e0e0;
+  background: $primary-color-light;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  color: $primary-color-dark;
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
-  font-size: 1.8rem;
+  font-size: 2.8rem;
+  width: fit-content;
+  margin: 0 auto;
   margin-bottom: 1rem;
   text-align: center;
-  color: #90caf9;
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, $primary-color-dark, $secondary-color-dark);
 }
 
 .messages {
-  background: #12121c;
+  background: $primary-color-dark;
   border-radius: 0.75rem;
   padding: 1rem;
-  max-height: 400px;
+  max-height: 50vh;
   overflow-y: auto;
   margin-bottom: 1rem;
   scroll-behavior: smooth;
+  flex-grow: 1;
 }
 
 .message {
@@ -124,18 +132,21 @@ const scrollToBottom = () => {
   padding: 0.75rem;
   border-radius: 0.5rem;
   line-height: 1.5;
-  transition: all 0.3s ease;
+  transition: all $transition-fast;
   white-space: pre-wrap;
-}
+  word-break: break-word;
 
-.message.user {
-  background-color: #283593;
-  color: #fff;
-}
+  &.user {
+    background-color: $primary-color-light;
+    color: $primary-color-dark;
+    align-self: flex-end;
+  }
 
-.message.assistant {
-  background-color: #2e7d32;
-  color: #fff;
+  &.assistant {
+    background-color: $secondary-color-light;
+    color: $primary-color-dark;
+    align-self: flex-start;
+  }
 }
 
 .dots span {
@@ -173,28 +184,31 @@ const scrollToBottom = () => {
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   border: none;
-  background: #2a2a40;
-  color: #fff;
+  background: $tertiary-color-dark;
+  color: $primary-color-dark;
   font-size: 1rem;
-
+  transition: box-shadow $transition-fast;
+  &::placeholder {
+    color: $primary-color-dark;
+  }
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #90caf9;
+    box-shadow: 0 0 0 2px $primary-color;
   }
 }
 
 .button {
   padding: 0.75rem 1.5rem;
-  background-color: #90caf9;
-  color: #000;
+  background-color: $primary-color;
+  color: $font__color--light;
   font-weight: 600;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background $transition-fast;
 
   &:hover {
-    background-color: #64b5f6;
+    background-color: $tertiary-color-light;
   }
 
   &:disabled {

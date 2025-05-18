@@ -1,21 +1,21 @@
 <script setup>
-import { ref, reactive, onMounted, computed, watch, nextTick } from "vue";
-import { useRoute } from "vue-router";
+import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 
-const route = useRoute();
-const isMenuOpen = ref(false);
-const activeIndex = ref(1);
-const navbarRef = ref(null);
+const route = useRoute()
+const isMenuOpen = ref(false)
+const activeIndex = ref(1)
+const navbarRef = ref(null)
 
 const props = defineProps({
   items: {
     type: Array,
     required: true,
-    validator: (val) => val.every((item) => "path" in item && "title" in item),
+    validator: (val) => val.every((item) => 'path' in item && 'title' in item),
   },
   basePath: {
     type: String,
-    default: "/",
+    default: '/',
   },
   isSubNav: {
     type: Boolean,
@@ -25,65 +25,96 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const fullPaths = computed(() =>
-  props.items.map((item) => ({
-    ...item,
-    path: `${props.basePath}/${item.path}`.replace(/\/+/g, "/"),
-  }))
-);
+const fullPaths = computed(() => {
+  let base = props.basePath
+
+  if (props.inverted) {
+    const segments = route.path.split('/').filter(Boolean)
+    const lastSegment = segments[segments.length - 1]
+    const isItemInPath = props.items.some((item) => item.path === lastSegment)
+
+    base = isItemInPath ? '/' + segments.slice(0, -1).join('/') : route.path
+  }
+
+  return props.items.map((item) => {
+    const baseSegments = base.split('/').filter(Boolean)
+    const itemSegments = item.path.split('/').filter(Boolean)
+
+    let mergedPath = [...baseSegments]
+
+    if (
+      itemSegments.length &&
+      baseSegments[baseSegments.length - 1] !== itemSegments[0]
+    ) {
+      mergedPath = [...mergedPath, ...itemSegments]
+    } else if (
+      itemSegments.length &&
+      baseSegments.slice(-itemSegments.length).join('/') !== itemSegments.join('/')
+    ) {
+      mergedPath = [...mergedPath, ...itemSegments]
+    }
+
+    return {
+      ...item,
+      path: '/' + mergedPath.join('/'),
+    }
+  })
+})
 
 const selectorStyle = reactive({
-  top: "0",
-  left: "0",
-  width: "0",
-});
-
+  left: '0',
+  width: '0',
+})
 const isActive = (path) => {
-  return props.isSubNav ? route.path === path : route.path.startsWith(path);
-};
+  if (path === '/') return route.path === '/'
+
+  if (props.inverted) return route.path === path
+
+  return (
+    route.path.startsWith(path) &&
+    (route.path === path || route.path.charAt(path.length) === '/' || path === '/')
+  )
+}
+onUpdated(() => {
+  nextTick(updateSelector)
+})
 
 const updateSelector = () => {
-  const activeElement = navbarRef.value?.querySelector(".nav-item.active");
-  const navbar = navbarRef.value;
+  nextTick(() => {
+    const activeElement = navbarRef.value?.querySelector('.nav-item.active')
+    const navbar = navbarRef.value
 
-  if (activeElement && navbar) {
-    const navRect = navbar.getBoundingClientRect();
-    const activeRect = activeElement.getBoundingClientRect();
+    if (activeElement && navbar) {
+      const elementLeft = activeElement.offsetLeft
+      const elementWidth = activeElement.offsetWidth
 
-    Object.assign(selectorStyle, {
-      top: `${activeRect.top - navRect.top}px`,
-      left: `${activeRect.left - navRect.left}px`,
-      width: `${activeElement.offsetWidth}px`,
-    });
-  }
-};
-
+      Object.assign(selectorStyle, {
+        left: `${elementLeft}px`,
+        width: `${elementWidth}px`,
+      })
+    }
+  })
+}
 const setActive = (index) => {
-  activeIndex.value = index;
-  isMenuOpen.value = false;
-  nextTick(updateSelector);
-};
-
-const handleResize = () => {
-  updateSelector();
-  if (window.innerWidth > 991) isMenuOpen.value = false;
-};
+  activeIndex.value = index
+  isMenuOpen.value = false
+  nextTick(updateSelector)
+}
 
 onMounted(() => {
-  updateSelector();
-  window.addEventListener("resize", handleResize);
-});
+  updateSelector()
+})
 
 watch(
   () => route.path,
-  () => nextTick(updateSelector)
-);
+  () => nextTick(updateSelector),
+)
 </script>
 
 <template>
-  <ul ref="navbarRef" class="navbar-nav">
+  <ul ref="navbarRef" class="custom-nav navbar-nav">
     <div class="hori-selector" :class="{ inverted }" :style="selectorStyle">
       <div class="left" />
       <div class="right" />
@@ -96,135 +127,126 @@ watch(
       @click="setActive(index)"
     >
       <NuxtLink class="nav-link" :to="item.path">
-        <i :class="item.icon" />
         <span class="text">{{ item.title }}</span>
       </NuxtLink>
     </li>
   </ul>
 </template>
-
 <style lang="scss" scoped>
-.navbar-nav {
-  position: relative;
-  display: flex;
-  gap: 1.5rem;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  .nav-item {
+.custom-nav {
+  &.navbar-nav {
     position: relative;
-    z-index: 1;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    isolation: isolate;
 
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      text-decoration: none;
-      transition: color 0.3s ease;
-
-      i {
-        font-size: 1.1rem;
-        color: #fff;
-        transition: color 0.3s ease;
-      }
-
-      .text {
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #fff;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: color 0.3s ease;
-      }
-
-      &:hover {
-        i,
-        .text {
-          color: rgba(255, 255, 255, 0.8);
-        }
-      }
-    }
-
-    &.active {
+    .nav-item {
+      position: relative;
+      z-index: 1;
+      bottom: 0.5rem;
       .nav-link {
-        i,
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        text-decoration: none;
+        font-size: 15px;
+        color: $secondary-color-lighter;
+        transition: all 0.2s;
+        position: relative;
+
+        i {
+          font-size: 1.1rem;
+          transition: inherit;
+        }
+
         .text {
-          color: #171717;
+          font-size: 0.95rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          transition: inherit;
         }
       }
-    }
-  }
-}
 
-.hori-selector {
-  position: absolute;
-  height: 2.2rem;
-  background: #fff;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  z-index: 0;
+      &.active {
+        .nav-link {
+          color: $secondary-color-darker;
 
-  .left,
-  .right {
-    position: absolute;
-    width: 20px;
-    height: 15px;
-    background: #fff;
-
-    &::before {
-      content: "";
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: #171717;
-    }
-  }
-
-  .left {
-    left: -20px;
-
-    &::before {
-      bottom: 0;
-      left: -25px;
-    }
-  }
-
-  .right {
-    right: -20px;
-
-    &::before {
-      bottom: 0;
-      right: -25px;
-    }
-  }
-
-  &.inverted {
-    transform: rotate(180deg);
-    border-radius: 0;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-  }
-}
-
-@media (max-width: 991px) {
-  .navbar-nav {
-    flex-direction: column;
-    gap: 0.5rem;
-
-    .nav-item .nav-link {
-      padding: 0.75rem;
+          i,
+          .text {
+            color: inherit;
+          }
+        }
+      }
     }
   }
 
   .hori-selector {
-    margin-left: 10px;
-    border-radius: 0;
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    background: $tertiary-color-light;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+
+    transition: all 0.6s;
+    z-index: 0;
+
+    .left,
+    .right {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      background: $tertiary-color-light;
+      bottom: -0.02rem;
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: $secondary-color-light;
+      }
+    }
+
+    .left {
+      left: -25px;
+
+      &::before {
+        bottom: 0;
+        left: -25px;
+      }
+    }
+
+    .right {
+      right: -25px;
+
+      &::before {
+        bottom: 0;
+        right: -25px;
+      }
+    }
+
+    &.inverted {
+      background: $tertiary-color-light;
+      transform: rotate(180deg);
+      margin-top: 0rem;
+      margin-bottom: 10px;
+
+      .left,
+      .right {
+        background: $tertiary-color-light;
+
+        &::before {
+          background: $secondary-color-light;
+        }
+      }
+    }
   }
 }
 </style>

@@ -1,7 +1,9 @@
 {
-    "tabTitle": {
-        "math": "Mathematics",
-        "physics": "Physics"
-        
-    }
+  "tabTitle": {
+    "math": "Mathematics",
+    "physics": "Physics"
+  },
+  "maths": "Mathematics",
+  "physics": "Physics",
+  "more": "More"
 }

@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { set } from 'zod'
+import type { FieldOfStudy, StrapiResponse } from '~/interfaces/strapi/fields-of-studies'
 
 const config = useRuntimeConfig()
+const jwt = localStorage.getItem('jwt')
 
-const { data: fieldsRaw } = await $fetch(
-  `${config.public.STRAPI_URL}/api/fields-of-studies?populate=bookCover`,
+const { data: fieldsRaw } = await useStrapiFetch<StrapiResponse<FieldOfStudy>>(
+  'fields-of-studies',
+  jwt,
   {
-    headers: {
-      Authorization: `Bearer ${config.public.STRAPI_TOKEN}`,
-    },
+    params: { populate: 'bookCover' },
   },
 )
-
 const expandedCard = ref<number | null>(null)
 const searchQuery = ref('')
 
@@ -20,10 +21,55 @@ const toggleExpand = (index: number) => {
 }
 
 const filteredFields = computed(() => {
-  return fieldsRaw?.filter((field: unknown) =>
+  return fieldsRaw?.filter((field: FieldOfStudy) =>
     field.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
   )
 })
+
+// Obtener usuario autenticado
+const user = await useStrapiFetch<any>('users/me', jwt, {
+  params: { populate: 'fields_of_studies', status: 'published' },
+})
+console.log('user', user)
+
+// Relación actual
+const subscribedFieldIds = ref<number[]>(user?.fields_of_studies?.map((f) => f.id) ?? [])
+
+const isSubscribed = (fieldId: number) => {
+  return subscribedFieldIds.value.includes(fieldId)
+}
+
+// Suscribir (añadir ID)
+const subscribe = async (fieldId: number) => {
+  if (isSubscribed(fieldId)) return
+
+  const newFields = [...subscribedFieldIds.value, fieldId]
+  console.log('newFields', newFields)
+  const updated = await useStrapiFetch('user/me', jwt, {
+    method: 'PUT',
+    body: {
+      fields_of_studies: {
+        connect: [fieldId],
+      },
+    },
+  })
+
+  subscribedFieldIds.value = updated.fields_of_studies.map((f) => f.id)
+}
+
+// Desuscribir (remover ID)
+const unsubscribe = async (fieldId: number) => {
+  const newFields = subscribedFieldIds.value.filter((id) => id !== fieldId)
+
+  const updated = await useStrapiFetch('users/me', jwt, {
+    method: 'PUT',
+    body: {
+      fields_of_studies: newFields,
+    },
+  })
+
+  subscribedFieldIds.value = updated.fields_of_studies.map((f) => f.id)
+}
 </script>
 
 <template>
@@ -59,6 +105,20 @@ const filteredFields = computed(() => {
               {{ field.description?.[0]?.children?.[0]?.text }}
             </p>
           </div>
+
+          <!-- Botones -->
+          <div class="mt-4">
+            <button
+              v-if="!isSubscribed(field.id)"
+              class="subscribe-btn"
+              @click.stop="subscribe(field.id)"
+            >
+              Subscribirse
+            </button>
+            <button v-else class="unsubscribe-btn" @click.stop="unsubscribe(field.id)">
+              Desubscribirse
+            </button>
+          </div>
         </div>
       </div>
     </TransitionGroup>
@@ -76,13 +136,13 @@ const filteredFields = computed(() => {
   h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #ffffff;
+    color: $secondary-color;
     margin-bottom: 0.25rem;
   }
 
   .subtitle {
     font-size: 1.2rem;
-    color: #dcdcdc;
+    color: $secondary-color-light;
     margin-bottom: 1rem;
   }
 
@@ -92,13 +152,13 @@ const filteredFields = computed(() => {
     padding: 0.8rem 1rem;
     margin: 1rem 0 2rem;
     font-size: 1rem;
-    border: none;
+    border: 0.2rem dotted $secondary-color;
     border-radius: 8px;
-    background: #ffffff22;
-    color: #fff;
+    background: $secondary-color-light;
+    color: $tertiary-color-light;
 
     &::placeholder {
-      color: #cccccc;
+      color: $secondary-color-light;
     }
   }
 }
@@ -116,7 +176,7 @@ const filteredFields = computed(() => {
 }
 
 .card {
-  background-color: #1a1a1a;
+  background-color: $primary-color-dark;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -135,13 +195,13 @@ const filteredFields = computed(() => {
   .card-body {
     width: 100%;
     padding: 1.5rem;
-    background: #ffffff11;
+    background: $primary-color-light;
     text-align: center;
     transition: background 0.3s ease;
 
     h3 {
       font-size: 1.4rem;
-      color: #fff;
+      color: $primary-color-dark;
       margin-bottom: 0.75rem;
     }
 
@@ -154,7 +214,7 @@ const filteredFields = computed(() => {
 
     .description {
       font-size: 1rem;
-      color: #e2e2e2;
+      color: $primary-color-dark;
       line-height: 1.5;
       margin-top: 0.5rem;
       white-space: pre-wrap;

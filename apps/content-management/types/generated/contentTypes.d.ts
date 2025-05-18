@@ -616,6 +616,7 @@ export interface ApiFieldsOfStudyFieldsOfStudy extends Struct.CollectionTypeSche
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private
+    users: Schema.Attribute.Relation<'manyToMany', 'plugin::users-permissions.user'>
   }
 }
 
@@ -1105,7 +1106,6 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
   }
   options: {
     draftAndPublish: false
-    timestamps: true
   }
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
@@ -1119,6 +1119,10 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6
       }>
+    fields_of_studies: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::fields-of-study.fields-of-study'
+    >
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<
       'oneToMany',
