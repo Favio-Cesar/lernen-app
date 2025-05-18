@@ -593,24 +593,27 @@ export interface ApiFieldsOfStudyFieldsOfStudy extends Struct.CollectionTypeSche
           localized: true
         }
       }>
-    iconCover: Schema.Attribute.Media<'images'> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true
-        }
-      }>
+    iconCover: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'fa fa-question-circle'>
     locale: Schema.Attribute.String
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::fields-of-study.fields-of-study'
     >
+    longTitle: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true
+        }
+      }>
     publishedAt: Schema.Attribute.DateTime
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
-          localized: true
+          localized: false
         }
       }>
     updatedAt: Schema.Attribute.DateTime

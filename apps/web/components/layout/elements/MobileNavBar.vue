@@ -1,75 +1,46 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import type { FieldOfStudy, StrapiResponse } from '~/interfaces/strapi/fields-of-studies'
-const jwt = localStorage.getItem('jwt')
+import { useFieldNavigation } from '~/composables/useFieldNavigation'
 
-console.log('jwt', jwt)
-const { fields_of_studies: fields } = await useStrapiFetch<StrapiResponse<FieldOfStudy>>(
-  'users/me',
-  jwt,
-  {
-    params: { populate: 'fields_of_studies' },
-  },
-)
-const { t } = useI18n()
-const route = useRoute()
-const navItems = ref([
-  { path: '/maths', title: t('maths'), icon: 'fas fa-square-root-alt' },
-  { path: '/physics', title: t('physics'), icon: 'fas fa-atom' },
-  { path: '/more', title: t('more'), icon: 'fa fa-plus' },
-])
-
-const isMenuOpen = ref(false)
-const shouldShowSelector = computed(() => {
-  return !route.path.includes('/more')
-})
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
-const closeMenu = () => {
-  isMenuOpen.value = false
-}
+const { t, navItems, isMenuOpen, toggleMenu, closeMenu, shouldShowSelector } =
+  useFieldNavigation()
 </script>
 
 <template>
   <IconsMenuIcon class="nav__icon" :is-open="isMenuOpen" @toggle="toggleMenu" />
   <Transition name="mobile-menu">
     <nav v-if="isMenuOpen" class="nav" :class="{ active: isMenuOpen }">
-      >
-
       <div class="nav-collapse" :class="{ 'show-menu': isMenuOpen }">
         <ul class="nav-main">
           <li v-for="(item, index) in navItems" :key="index">
             <NuxtLink :to="item.path" class="nav-link">
               <i :class="item.icon"></i>
-              <span>{{ item.title }}</span>
+              <span>{{ item.longTitle }}</span>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink to="/home" class="sub-link" @click="closeMenu">
+              <i class="fas fa-book"></i>
+              <span>{{ t('more') }}</span>
             </NuxtLink>
           </li>
         </ul>
         <Transition name="slide-fade">
-          <ul v-if="shouldShowSelector" class="nav-sub" @click="closeMenu">
+          <ul v-if="shouldShowSelector" class="nav-sub">
             <li>
-              <NuxtLink to="/home" class="sub-link">
-                <i class="fas fa-book"></i>
-                <span>Home</span>
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/workbook" class="sub-link">
+              <NuxtLink to="/workbook" class="sub-link" @click="closeMenu">
                 <i class="fas fa-book"></i>
                 <span>Workbook</span>
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/resources" class="sub-link">
+              <NuxtLink to="/resources" class="sub-link" @click="closeMenu">
                 <i class="fas fa-box-open"></i>
                 <span>Resources</span>
               </NuxtLink>
             </li>
           </ul>
         </Transition>
+        <IconsLocaleSwitcher />
       </div>
     </nav>
   </Transition>
@@ -88,7 +59,44 @@ const closeMenu = () => {
   opacity: 0;
 }
 $mobile-breakpoint: 991px;
+.nav-collapse {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: 100vh;
+  background: $primary-color-lighter;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  z-index: 999;
+  box-shadow: -2px 0 10px $primary-color-transparent;
+
+  &.show-menu {
+    right: 0;
+  }
+}
+
+.nav-main,
+.nav-sub {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nav-link,
+.sub-link {
+  padding: 1rem;
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+  }
+}
 .nav {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
   &.active {
     background-color: $primary-color-transparent;
   }
@@ -143,42 +151,5 @@ $mobile-breakpoint: 991px;
 .slide-fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
-}
-
-/* Responsive */
-@media (max-width: $mobile-breakpoint) {
-  .nav-collapse {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 300px;
-    height: 100vh;
-    background: $primary-color-lighter;
-    padding: 2rem;
-    transition: all 0.3s ease;
-    z-index: 999;
-    box-shadow: -2px 0 10px $primary-color-transparent;
-
-    &.show-menu {
-      right: 0;
-    }
-  }
-
-  .nav-main,
-  .nav-sub {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .nav-link,
-  .sub-link {
-    padding: 1rem;
-    border-radius: 4px;
-
-    &:hover {
-      background: rgba($primary-color, 0.1);
-    }
-  }
 }
 </style>

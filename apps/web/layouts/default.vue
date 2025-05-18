@@ -1,18 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import SuperNavBar from '~/components/layout/elements/SuperNavBar.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const route = useRoute()
+
 const navItems = ref([
   { path: '/maths', title: t('maths'), icon: 'fas fa-square-root-alt' },
   { path: '/physics', title: t('physics'), icon: 'fas fa-atom' },
   { path: '/more', title: t('more'), icon: 'fa fa-plus' },
 ])
 const basePath = ref('/')
-const route = useRoute()
-const shouldShowSelector = computed(() => {
-  return !route.path.includes('/more')
+
+const shouldShowSelector = computed(() => !route.path.includes('/more'))
+
+const isMobile = ref(false)
+
+function updateIsMobile() {
+  isMobile.value = window.innerWidth <= 992
+}
+
+onMounted(() => {
+  updateIsMobile()
+  window.addEventListener('resize', updateIsMobile)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateIsMobile)
 })
 </script>
 
@@ -36,7 +52,7 @@ const shouldShowSelector = computed(() => {
         </Transition>
       </div>
     </nav>
-    <LayoutElementsMobileNavBar class="nav-mobile" />
+    <LayoutElementsMobileNavBar v-if="isMobile" />
     <NuxtPage :transition="{ name: 'fade', mode: 'out-in' }" />
   </div>
 </template>
@@ -71,9 +87,7 @@ const shouldShowSelector = computed(() => {
   opacity: 1;
   max-height: 500px;
 }
-.nav-mobile {
-  display: none;
-}
+
 .transition-height {
   overflow: hidden;
   transition:
@@ -121,7 +135,7 @@ const shouldShowSelector = computed(() => {
     position: relative;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 62rem) {
   .navbar-collapse {
     display: none;
     &.show {

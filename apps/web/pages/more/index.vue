@@ -1,75 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { set } from 'zod'
-import type { FieldOfStudy, StrapiResponse } from '~/interfaces/strapi/fields-of-studies'
-
-const config = useRuntimeConfig()
-const jwt = localStorage.getItem('jwt')
-
-const { data: fieldsRaw } = await useStrapiFetch<StrapiResponse<FieldOfStudy>>(
-  'fields-of-studies',
-  jwt,
-  {
-    params: { populate: 'bookCover' },
-  },
-)
-const expandedCard = ref<number | null>(null)
-const searchQuery = ref('')
-
-const toggleExpand = (index: number) => {
-  expandedCard.value = expandedCard.value === index ? null : index
-}
-
-const filteredFields = computed(() => {
-  return fieldsRaw?.filter((field: FieldOfStudy) =>
-    field.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  )
-})
-
-// Obtener usuario autenticado
-const user = await useStrapiFetch<any>('users/me', jwt, {
-  params: { populate: 'fields_of_studies', status: 'published' },
-})
-console.log('user', user)
-
-// Relación actual
-const subscribedFieldIds = ref<number[]>(user?.fields_of_studies?.map((f) => f.id) ?? [])
-
-const isSubscribed = (fieldId: number) => {
-  return subscribedFieldIds.value.includes(fieldId)
-}
-
-// Suscribir (añadir ID)
-const subscribe = async (fieldId: number) => {
-  if (isSubscribed(fieldId)) return
-
-  const newFields = [...subscribedFieldIds.value, fieldId]
-  console.log('newFields', newFields)
-  const updated = await useStrapiFetch('user/me', jwt, {
-    method: 'PUT',
-    body: {
-      fields_of_studies: {
-        connect: [fieldId],
-      },
-    },
-  })
-
-  subscribedFieldIds.value = updated.fields_of_studies.map((f) => f.id)
-}
-
-// Desuscribir (remover ID)
-const unsubscribe = async (fieldId: number) => {
-  const newFields = subscribedFieldIds.value.filter((id) => id !== fieldId)
-
-  const updated = await useStrapiFetch('users/me', jwt, {
-    method: 'PUT',
-    body: {
-      fields_of_studies: newFields,
-    },
-  })
-
-  subscribedFieldIds.value = updated.fields_of_studies.map((f) => f.id)
-}
+const {
+  filteredFields,
+  searchQuery,
+  expandedCard,
+  toggleExpand,
+  isSubscribed,
+  subscribe,
+  unsubscribe,
+  config,
+} = await useFieldsOfStudy()
 </script>
 
 <template>

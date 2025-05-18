@@ -1,32 +1,42 @@
-import { alias } from "./config/alias";
+import { alias } from './config/alias'
 
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
+  compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   ssr: false,
   nitro: {
-    preset: "static",
+    preset: 'static',
   },
   alias,
   app: {
-    baseURL: "./",
+    baseURL: './',
   },
-  plugins: ["~/locales/i18n.ts"],
+  plugins: ['~/locales/i18n.ts'],
   modules: [
-    "@nuxt/eslint",
-    "@nuxt/image",
-    "@nuxt/ui",
-    "@nuxt/test-utils",
-    "@nuxt/fonts",
-    "@nuxt/scripts",
+    '@nuxt/eslint',
+    '@nuxt/image',
+    '@nuxt/ui',
+    '@nuxt/test-utils',
+    '@nuxt/fonts',
+    '@nuxt/scripts',
+    '@nuxtjs/strapi',
+    '@nuxtjs/i18n',
   ],
+  strapi: {
+    url: process.env.STRAPI_URL || 'http://localhost:1337',
+    prefix: '/api',
+    admin: '/admin',
+    version: 'v5',
+    cookie: {},
+    cookieName: 'jwtToken',
+  },
 
-  css: ["@/assets/styles/main.scss"],
+  css: ['@/assets/styles/main.scss'],
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          api: "modern-compiler",
+          api: 'modern-compiler',
           additionalData:
             '@use "~/assets/styles/_variables.scss" as *;@use "~/assets/styles/_mixins.scss" as *;',
         },
@@ -39,4 +49,4 @@ export default defineNuxtConfig({
       STRAPI_TOKEN: process.env.STRAPI_TOKEN,
     },
   },
-});
+})

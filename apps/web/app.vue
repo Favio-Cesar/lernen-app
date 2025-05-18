@@ -1,7 +1,9 @@
 <script setup lang="ts"></script>
 <template>
   <NuxtLayout>
-    <NuxtPage />
+    <NuxtPage :key="$route.fullPath" />
   </NuxtLayout>
 </template>
-<style></style>
+<style>
+@import 'flag-icons/css/flag-icons.min.css';
+</style>

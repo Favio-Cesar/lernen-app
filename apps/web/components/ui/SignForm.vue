@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { z } from 'zod'
 import { useRouter } from 'vue-router'
+import { useCookie } from '#imports' // Asegúrate que useCookie esté disponible en tu entorno
+
 const router = useRouter()
 const props = defineProps<{
   mode: 'login' | 'signup'
@@ -13,6 +15,7 @@ const password = ref('')
 const errorMessages = ref<string[]>([])
 
 const isLogin = computed(() => props.mode === 'login')
+
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -22,6 +25,13 @@ const signUpSchema = z.object({
   email: z.string().email('Valid email is required'),
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+})
+
+const jwtCookie = useCookie('jwtToken', {
+  path: '/', // cookie accesible en toda la app
+  maxAge: 60 * 60 * 24 * 7, // 7 días
+  sameSite: 'lax',
+  secure: false, // Pon true si usas https en producción
 })
 
 const handleSubmit = async (e: Event) => {
@@ -74,7 +84,10 @@ const handleSubmit = async (e: Event) => {
       throw new Error(data.error?.message || 'Authentication failed')
     }
 
-    localStorage.setItem('jwt', data.jwt)
+    // Guarda el JWT en la cookie
+    jwtCookie.value = data.jwt
+
+    // Redirige al home
     router.push('/')
   } catch (err: unknown) {
     errorMessages.value = [
