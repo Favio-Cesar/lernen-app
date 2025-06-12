@@ -1,104 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { z } from 'zod'
-import { useRouter } from 'vue-router'
-import { useCookie } from '#imports' // Asegúrate que useCookie esté disponible en tu entorno
+import { useAuth } from '@/composables/useAuth'
 
-const router = useRouter()
 const props = defineProps<{
   mode: 'login' | 'signup'
 }>()
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const errorMessages = ref<string[]>([])
-
-const isLogin = computed(() => props.mode === 'login')
-
-const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-})
-
-const signUpSchema = z.object({
-  email: z.string().email('Valid email is required'),
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-})
-
-const jwtCookie = useCookie('jwtToken', {
-  path: '/', // cookie accesible en toda la app
-  maxAge: 60 * 60 * 24 * 7, // 7 días
-  sameSite: 'lax',
-  secure: false, // Pon true si usas https en producción
-})
-
-const handleSubmit = async (e: Event) => {
-  e.preventDefault()
-  errorMessages.value = []
-
-  const result = isLogin.value
-    ? loginSchema.safeParse({
-        username: username.value,
-        password: password.value,
-      })
-    : signUpSchema.safeParse({
-        email: email.value,
-        username: username.value,
-        password: password.value,
-      })
-
-  if (!result.success) {
-    errorMessages.value = result.error.errors.map((err) => err.message)
-    return
-  }
-
-  const endpoint = isLogin.value
-    ? 'http://localhost:1337/api/auth/local'
-    : 'http://localhost:1337/api/auth/local/register'
-
-  const payload = isLogin.value
-    ? {
-        identifier: username.value,
-        password: password.value,
-      }
-    : {
-        username: username.value,
-        email: email.value,
-        password: password.value,
-      }
-
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-
-    const data = await response.json()
-
-    if (!response.ok) {
-      throw new Error(data.error?.message || 'Authentication failed')
-    }
-
-    // Guarda el JWT en la cookie
-    jwtCookie.value = data.jwt
-
-    // Redirige al home
-    router.push('/')
-  } catch (err: unknown) {
-    errorMessages.value = [
-      err instanceof Error ? err.message : 'An unknown error occurred',
-    ]
-  }
-}
+const { username, email, password, isLogin, errorMessages, handleSubmit } = useAuth(
+  props.mode,
+)
 </script>
 
 <template>
-  <form @submit="handleSubmit">
+  <form @submit="handleSubmit" class="sign-form">
     <h1>{{ isLogin ? 'Sign In' : 'Sign Up' }}</h1>
 
     <div class="social-container">
@@ -124,13 +37,13 @@ const handleSubmit = async (e: Event) => {
       </a>
     </div>
 
-    <span>{{ isLogin ? 'or use your account' : 'or use your email to register' }}</span>
+    <span>{{ $t('login.or_gmail') }}</span>
 
     <input
       v-if="!isLogin"
       v-model="email"
       type="email"
-      placeholder="📧 Email"
+      :placeholder="$t('login.form.email')"
       autocomplete="email"
       required
     />
@@ -138,7 +51,7 @@ const handleSubmit = async (e: Event) => {
     <input
       v-model="username"
       type="text"
-      placeholder="👤 Username"
+      :placeholder="$t('login.form.username')"
       autocomplete="username"
       required
     />
@@ -146,7 +59,7 @@ const handleSubmit = async (e: Event) => {
     <input
       v-model="password"
       type="password"
-      placeholder="🔒 Password"
+      :placeholder="$t('login.form.password')"
       autocomplete="current-password"
       required
     />
@@ -157,12 +70,17 @@ const handleSubmit = async (e: Event) => {
       </li>
     </ul>
 
-    <a href="#" v-if="isLogin">Forgot your password? 🤔</a>
+    <a href="#" v-if="isLogin">{{ $t('login.forgot_password') }}</a>
     <button type="submit">{{ isLogin ? 'Sign In' : 'Sign Up' }}</button>
   </form>
 </template>
 
 <style lang="scss" scoped>
+.sign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .social-container a {
   border: 1px solid #ddd;
   border-radius: 50%;
@@ -186,5 +104,21 @@ const handleSubmit = async (e: Event) => {
   font-size: 0.9em;
   margin: 5px 0;
   padding-left: 1em;
+}
+
+input {
+  background-color: #eee;
+  border: none;
+  padding: $input-padding;
+  margin: 0.5rem 0;
+  max-width: 90%;
+  border-radius: 0.4rem;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.4s;
+  outline: 0.1rem solid $primary-color-light;
+}
+
+input:focus {
+  background-color: #fff;
 }
 </style>

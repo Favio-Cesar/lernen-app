@@ -1,6 +1,29 @@
 <script setup lang="ts">
 import { useFieldNavigation } from '~/composables/useFieldNavigation'
+import { useNavbarPaths } from '~/composables/useNavbarSelector'
+const route = useRoute()
 
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true,
+    validator: (val) => val.every((item) => 'path' in item && 'title' in item),
+  },
+  basePath: {
+    type: String,
+    default: '/',
+  },
+  isSubNav: {
+    type: Boolean,
+    default: false,
+  },
+  inverted: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const { fullPaths, isActive } = useNavbarPaths(props)
 const { t, navItems, isMenuOpen, toggleMenu, closeMenu, shouldShowSelector } =
   useFieldNavigation()
 </script>
@@ -20,17 +43,15 @@ const { t, navItems, isMenuOpen, toggleMenu, closeMenu, shouldShowSelector } =
         </ul>
         <Transition name="slide-fade">
           <ul v-if="shouldShowSelector" class="nav-sub">
-            <li>
-              <NuxtLink to="/workbook" class="sub-link" @click="closeMenu">
-                <i class="fas fa-book"></i>
-                <span>Workbook</span>
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/resources" class="sub-link" @click="closeMenu">
-                <i class="fas fa-box-open"></i>
-                <span>Resources</span>
-              </NuxtLink>
+            <li v-for="(item, index) in fullPaths" :key="index">
+              <NuxtLink
+                :to="item.path"
+                class="sub-link"
+                :class="{ active: isActive(item.path) }"
+                @click="closeMenu"
+              >
+                <i class="fas fa-book"></i> <span>Workbook</span></NuxtLink
+              >
             </li>
           </ul>
         </Transition>

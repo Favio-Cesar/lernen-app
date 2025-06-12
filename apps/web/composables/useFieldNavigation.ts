@@ -15,7 +15,7 @@ export function useFieldNavigation() {
   const isMenuOpen = ref(false)
 
   const fetchFields = async (localeCode: string) => {
-    const jwt = useCookie('jwtToken')
+    const jwt = useCookie('jwt')
     if (!jwt.value) {
       console.warn('No JWT token found')
       return

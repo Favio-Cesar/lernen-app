@@ -10,14 +10,19 @@
   "options": {
     "draftAndPublish": true
   },
-  "pluginOptions": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "title": {
-      "type": "string"
-    },
-    "description": {
-      "type": "text",
-      "maxLength": 80
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "slug": {
       "type": "uid",
@@ -27,7 +32,16 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "author": {
       "type": "relation",
@@ -35,15 +49,20 @@
       "target": "api::author.author",
       "inversedBy": "articles"
     },
-    "category": {
+    "topic": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::category.category",
+      "target": "api::topic.topic",
       "inversedBy": "articles"
     },
-    "blocks": {
-      "type": "dynamiczone",
-      "components": ["shared.media", "shared.quote", "shared.rich-text", "shared.slider"]
+    "info": {
+      "type": "blocks",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

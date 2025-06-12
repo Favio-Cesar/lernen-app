@@ -1,3 +1,4 @@
+import i18nConfig from './config/i18n'
 import { alias } from './config/alias'
 
 export default defineNuxtConfig({
@@ -11,8 +12,8 @@ export default defineNuxtConfig({
   app: {
     baseURL: './',
   },
-  plugins: ['~/locales/i18n.ts'],
   modules: [
+    '@pinia/nuxt',
     '@nuxt/eslint',
     '@nuxt/image',
     '@nuxt/ui',
@@ -21,28 +22,42 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxtjs/strapi',
     '@nuxtjs/i18n',
+    '@nuxtjs/device',
   ],
+  i18n: {
+    ...i18nConfig,
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      fallbackLocale: 'es',
+    },
+  },
   strapi: {
     url: process.env.STRAPI_URL || 'http://localhost:1337',
     prefix: '/api',
     admin: '/admin',
     version: 'v5',
     cookie: {},
-    cookieName: 'jwtToken',
+    cookieName: 'jwt',
+  },
+  css: ['@/assets/styles/main.scss'],
+  imports: {
+    dirs: ['composables', 'utils'],
   },
 
-  css: ['@/assets/styles/main.scss'],
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
           additionalData:
-            '@use "~/assets/styles/_variables.scss" as *;@use "~/assets/styles/_mixins.scss" as *;',
+            '@use "@/assets/styles/reset.scss" as *;@use "@/assets/styles/_themes.scss" as *;@use "@/assets/styles/_mixins.scss" as *;@use "@/assets/styles/_variables.scss" as *;',
         },
       },
     },
   },
+
   runtimeConfig: {
     public: {
       STRAPI_URL: process.env.STRAPI_URL,

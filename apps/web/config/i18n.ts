@@ -1,15 +1,12 @@
 import type { ModuleOptions } from '@nuxtjs/i18n'
-import { pages } from './i18n/pages'
 
 export default {
   lazy: true,
   defaultLocale: 'es',
+  langDir: 'locales/',
   locales: [
-    { code: 'es', language: 'es' },
-    { code: 'en', language: 'en' },
-    { code: 'pt-BR', language: 'pt-BR' },
+    { code: 'es', file: 'es.json' },
+    { code: 'en', file: 'en.json' },
   ],
-  strategy: 'prefix_except_default',
-  customRoutes: 'config',
-  pages,
+  strategy: 'no_prefix',
 } as Partial<ModuleOptions>

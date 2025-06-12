@@ -1,0 +1,23 @@
+// styles/themes.scss
+$themes: (
+  light: (
+    primary: #e2e3e3,         // azul claro vibrante para acentos
+    secondary: #f0f0f3,       // gris muy claro para fondos principales
+    tertiary: #d8d9da,        // gris medio para fondos secundarios
+    text: #252525,            // texto oscuro, legible pero suave
+    background: #ffffff,      // fondo blanco puro para máxima claridad
+    border: #eeeeee,      
+     scrollbar-thumb: rgba(0, 0, 0, 0.2),
+    scrollbar-thumb-hover: rgba(0, 0, 0, 0.35),
+  ),
+  dark: (
+    primary: #fafafa,         // azul claro para acentos, más suave que el light
+    secondary: #252525,       // gris oscuro para fondos principales
+    tertiary: #4f4f4f,        // gris medio-oscuro para fondos secundarios
+    text: #e0e0e0,            // texto claro, legible sin ser muy brillante
+    background: #252525,      // fondo oscuro suave, no negro puro para menor fatiga
+    border: #7e7e7e,
+     scrollbar-thumb: rgba(255, 255, 255, 0.2),
+    scrollbar-thumb-hover: rgba(255, 255, 255, 0.35),          // bordes oscuros para definir secciones
+  )
+);

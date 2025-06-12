@@ -1,0 +1,63 @@
+{
+  "home": {
+    "header__nav": {
+      "home": "Home",
+      "about": "About Us",
+      "learning": "Learning",
+      "contact": "Contact",
+      "sign-in": "Sign in"
+    },
+    "intro": {
+      "h2_left": "Welcome to LERNEN.IO",
+      "h2_right": "Unlock all your potential",
+      "p_left": "your ultimate destination for diverse learning experiences",
+      "p_right": "Discover a world of knowledge at LERNEN.IO, Explore our app today!",
+      "button_left": "Explore",
+      "button_right": "Get Started"
+    },
+    "body": {
+      "h3": "Use your mind",
+      "h2_right": "Explore our app and find your field of interest",
+      "p_sub": "Discover a vast array of subjects to expand your knowledge like a pro.",
+      "blobs": [
+        {
+          "title": "Learn with ease",
+          "description": "At LERNEN.IO, we believe in providing a seamless and engaging learning experience."
+        },
+        {
+          "title": "Master new skills",
+          "description": "Unlock your full potential with LERNEN.IO. Our platform offers a comprehensive range of subjects."
+        },
+        {
+          "title": "Personalized learning",
+          "description": "Advance through your learning journey at your own pace. Our platform adapts to your unique learning style."
+        }
+      ]
+    },
+    "conclusion": {
+      "h3": "don't wait any longer",
+      "h2": "Embrace the future of digital learning",
+      "p": "Get your free account now and start working on your personal growth.",
+      "button": "Join now"
+    }
+  },
+  "login": {
+    "login": {
+      "title": "Sign in",
+      "h2": "Hello again!",
+      "p": "To keep connected with us please login with your personal info"
+    },
+    "register": {
+      "title": "Sign Up",
+      "h2": "Don't have an account?",
+      "p": "Sign up to our page and get a personalised experience!"
+    },
+    "or_gmail": "or sign in with Google",
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "username": "Username"
+    },
+    "forgot_password": "Forgot your password?"
+  }
+}

@@ -6,6 +6,9 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const route = useRoute()
+const authStore = useAuthStore()
+
+const { isLoggedIn } = storeToRefs(authStore)
 
 const navItems = ref([
   { path: '/maths', title: t('maths'), icon: 'fas fa-square-root-alt' },
@@ -15,26 +18,12 @@ const navItems = ref([
 const basePath = ref('/')
 
 const shouldShowSelector = computed(() => !route.path.includes('/more'))
-
-const isMobile = ref(false)
-
-function updateIsMobile() {
-  isMobile.value = window.innerWidth <= 992
-}
-
-onMounted(() => {
-  updateIsMobile()
-  window.addEventListener('resize', updateIsMobile)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateIsMobile)
-})
+const { isMobile, isTablet, isDesktop } = useDevice()
 </script>
 
 <template>
   <div>
-    <nav class="navbar navbar-mainbg">
+    <nav class="navbar navbar-mainbg" v-if="isLoggedIn">
       <div class="navbar navbar-collapse navbar-supported-content">
         <SuperNavBar :items="navItems" :base-path="basePath" is-sub-nav />
         <Transition name="fade-expand">
@@ -50,15 +39,43 @@ onBeforeUnmount(() => {
             inverted
           />
         </Transition>
-        <IconsLocaleSwitcher class="nav-link" size="2rem" />
       </div>
+
+      <IconsUserIcon />
     </nav>
-    <LayoutElementsMobileNavBar v-if="isMobile" />
+
+    <Transition name="fade-expand">
+      <LayoutElementsMobileNavBar
+        :items="navItems"
+        :base-path="basePath"
+        is-sub-nav
+        v-if="isMobile"
+      />
+    </Transition>
     <NuxtPage :transition="{ name: 'fade', mode: 'out-in' }" />
+  </div>
+  <div class="fixed-switchers">
+    <IconsLocaleSwitcher size="2.5rem" />
+    <IconsColorSwitcher size="2.5rem" />
   </div>
 </template>
 
 <style lang="scss">
+@include themify($themes) {
+  .navbar-mainbg {
+    background-color: themed('tertiary');
+    border-bottom: 0.5rem solid themed('secondary');
+  }
+}
+.fixed-switchers {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 2rem;
+  z-index: 1000;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.4s ease;
@@ -71,22 +88,20 @@ onBeforeUnmount(() => {
 
 .fade-expand-enter-active,
 .fade-expand-leave-active {
-  transition:
-    opacity 0.4s ease,
-    max-height 0.3s ease;
+  transition: all 0.4s ease;
   overflow: hidden;
 }
 
 .fade-expand-enter-from,
 .fade-expand-leave-to {
   opacity: 0;
-  max-height: 0 !important;
+  transform: translateY(-100%);
 }
 
 .fade-expand-enter-to,
 .fade-expand-leave-from {
   opacity: 1;
-  max-height: 500px;
+  transform: translateY(0%);
 }
 
 .transition-height {
@@ -111,6 +126,8 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 4rem;
   min-height: fit-content;
+  height: 4rem;
+  width: 100%;
   transition: all 0.5s ease;
 }
 .navbar-mainbg {

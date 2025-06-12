@@ -1,29 +1,17 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  const jwtCookie = useCookie('jwtToken')
-  const jwt = jwtCookie.value
+  if (import.meta.server) return
 
-  if (!jwt && to.path !== '/login') {
-    return navigateTo('/login')
-  }
+  const authStore = useAuthStore()
+  const { isLoggedIn } = storeToRefs(authStore)
 
-  if (jwt) {
-    try {
-      await $fetch('http://localhost:1337/api/users/me', {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
+  await authStore.checkAuth()
 
-      if (to.path === '/login') {
-        return navigateTo('/')
-      }
+  const adminRoutes = ['user']
+  const name = to.matched[0].name
+  const pagina = typeof name === 'string' ? name.split('___')[0] : ''
+  console.log('Middleware check:', isLoggedIn.value)
 
-      return
-    } catch (error) {
-      // Borrar cookie correctamente en SSR
-      jwtCookie.value = null
-      console.error('Error fetching user:', error)
-      return navigateTo('/login')
-    }
+  if (adminRoutes.includes(pagina) && !isLoggedIn.value) {
+    return navigateTo('/')
   }
 })

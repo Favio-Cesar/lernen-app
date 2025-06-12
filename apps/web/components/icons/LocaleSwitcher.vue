@@ -1,21 +1,18 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-
 const props = defineProps<{
   size?: number | string
 }>()
 
-const { locale } = useI18n()
-
 const currentLocale = computed(() => locale.value)
-function toggleLocale() {
-  locale.value = locale.value === 'en' ? 'es' : 'en'
+
+const { locale, setLocale } = useI18n()
+
+async function toggleLocale() {
+  await setLocale(locale.value === 'en' ? 'es' : 'en')
 }
 
-// Tamaño en rem, por defecto 6
 const sizeRem = computed(() => {
   if (!props.size) return '6rem'
-  // Si el prop es número, lo convertimos a rem, si es string, lo usamos tal cual
   return typeof props.size === 'number' ? `${props.size}rem` : props.size
 })
 </script>
@@ -41,7 +38,6 @@ const sizeRem = computed(() => {
   border: none;
   cursor: pointer;
   padding: 0;
-  /* width y height se manejan desde style */
   border-radius: 50%;
   overflow: hidden;
   display: flex;

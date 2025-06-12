@@ -1,0 +1,72 @@
+{
+  "home": {
+    "header__nav": {
+      "home": "Inicio",
+      "about": "Sobre nosotros",
+      "learning": "Aprendizaje",
+      "contact": "Contacto",
+      "sign-in": "Iniciar sesión"
+    },
+    "intro": {
+      "h2_left": "Bienvenido a LERNEN.IO",
+      "h2_right": "Desbloquea todo tu potencial",
+      "p_left": "tu destino definitivo para experiencias de aprendizaje diversas",
+      "p_right": "Descubre un mundo de conocimiento en LERNEN.IO, ¡Explora nuestra aplicación hoy!",
+      "button_left": "Explorar",
+      "button_right": "Comenzar"
+    },
+    "body": {
+      "h3": "Usa tu mente",
+      "h2_right": "Explora nuestra app y encuentra tu área de interés",
+      "p_sub": "Descubre una gran variedad de temas para expandir tu conocimiento como un profesional.",
+      "blobs": [
+        {
+          "title": "Aprende con facilidad",
+          "description": "En LERNEN.IO creemos en ofrecer una experiencia de aprendizaje fluida y atractiva."
+        },
+        {
+          "title": "Domina nuevas habilidades",
+          "description": "Desbloquea todo tu potencial con LERNEN.IO. Nuestra plataforma ofrece una gama completa de materias."
+        },
+        {
+          "title": "Aprendizaje personalizado",
+          "description": "Avanza en tu camino de aprendizaje a tu propio ritmo. Nuestra plataforma se adapta a tu estilo único de aprendizaje."
+        }
+      ]
+    },
+    "conclusion": {
+      "h3": "no esperes más",
+      "h2": "Adopta el futuro del aprendizaje digital",
+      "p": "Crea tu cuenta gratuita ahora y comienza a trabajar en tu crecimiento personal.",
+      "button": "Únete ahora"
+    },
+    "article": {
+      "title": "Artículos",
+      "description": "Descubre artículos interesantes y aprende algo nuevo cada día."
+    }
+  },
+  "login": {
+    "login": {
+      "title": "Iniciar sesión",
+      "h2": "¡Hola de nuevo!",
+      "p": "Para mantenerte conectado con nosotros, por favor inicia sesión con tu información personal"
+    },
+    "register": {
+      "title": "Regístrate",
+      "h2": "¿No tienes una cuenta?",
+      "p": "Regístrate en nuestra página y obtén una experiencia personalizada."
+    },
+    "or_gmail": "o inicia sesión con Google",
+    "form": {
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "username": "Nombre de usuario"
+    },
+    "forgot_password": "¿Olvidaste tu contraseña?"
+  },
+  "cookies": {
+    "text": "Aceptar cookies?",
+    "more_info": "Más información",
+    "accept_cookies": "Aceptar"
+  }
+}

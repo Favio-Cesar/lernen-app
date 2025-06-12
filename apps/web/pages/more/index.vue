@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const {
+  fields,
   filteredFields,
   searchQuery,
   expandedCard,
@@ -63,42 +64,87 @@ const {
     </TransitionGroup>
   </section>
 
-  <IconsLoadingIcon v-else />
+  <IconsLoadingIcon status="1" v-else />
 </template>
 
 <style lang="scss" scoped>
+@include themify($themes) {
+  .card {
+    background-color: themed('primary');
+    .card-body {
+      background-color: themed('tertiary');
+      h3 {
+        color: themed('text');
+      }
+      .description {
+        color: themed('text');
+      }
+    }
+  }
+  .fields-container {
+    h1 {
+      color: themed('text');
+    }
+
+    .subtitle {
+      color: themed('text');
+    }
+    .search-bar {
+      border: 0.2rem dotted themed('primary');
+
+      color: themed('text');
+      &::placeholder {
+        color: themed('text');
+      }
+    }
+  }
+  .subscribe-btn,
+  .unsubscribe-btn {
+    background-color: themed('secondary');
+    color: themed('text');
+    &:hover {
+      background-color: themed('primary');
+      color: themed('secondary');
+    }
+  }
+
+  .unsubscribe-btn {
+    color: rgb(190, 49, 49);
+  }
+}
+.subscribe-btn,
+.unsubscribe-btn {
+  padding: $button-padding;
+  border-radius: $button-radius;
+  transition: all 0.2s ease;
+}
+
 .fields-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 2rem;
 
   h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 700;
-    color: $secondary-color;
+
     margin-bottom: 0.25rem;
   }
 
   .subtitle {
     font-size: 1.2rem;
-    color: $secondary-color-light;
+
     margin-bottom: 1rem;
   }
 
   .search-bar {
     width: 100%;
-    max-width: 400px;
+
     padding: 0.8rem 1rem;
     margin: 1rem 0 2rem;
     font-size: 1rem;
-    border: 0.2rem dotted $secondary-color;
-    border-radius: 8px;
-    background: $secondary-color-light;
-    color: $tertiary-color-light;
 
-    &::placeholder {
-      color: $secondary-color-light;
-    }
+    border-radius: 8px;
   }
 }
 

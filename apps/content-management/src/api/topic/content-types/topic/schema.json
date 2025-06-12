@@ -4,7 +4,8 @@
   "info": {
     "singularName": "topic",
     "pluralName": "topics",
-    "displayName": "Topic"
+    "displayName": "Topic",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -22,6 +23,21 @@
           "localized": true
         }
       }
+    },
+    "articles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::article.article",
+      "mappedBy": "topic"
+    },
+    "description": {
+      "type": "string"
+    },
+    "exercises": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::exercise.exercise",
+      "mappedBy": "topic"
     }
   }
 }
