@@ -23,24 +23,11 @@
       "unique": true,
       "pluginOptions": {
         "i18n": {
-          "localized": true
+          "localized": false
         }
       }
     },
     "bookCover": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images"
-      ],
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
-    "iconCover": {
       "type": "media",
       "multiple": false,
       "required": false,
@@ -65,6 +52,26 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::block.block"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "fields_of_studies"
+    },
+    "iconCover": {
+      "type": "string",
+      "required": true,
+      "default": "fa fa-question-circle"
+    },
+    "longTitle": {
+      "type": "text",
+      "required": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

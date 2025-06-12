@@ -1,85 +1,86 @@
 <script setup lang="ts">
-import { ref } from "vue";
-const containerRef = ref<HTMLElement | null>(null);
+import { ref } from 'vue'
+const containerRef = ref<HTMLElement | null>(null)
+const signup = ref(true)
 const handleSignUp = () => {
-  containerRef.value?.classList.add("right-panel-active");
-};
+  containerRef.value?.classList.add('right-panel-active')
+  signup.value = false
+}
 const handleSignIn = () => {
-  containerRef.value?.classList.remove("right-panel-active");
-};
+  containerRef.value?.classList.remove('right-panel-active')
+  signup.value = true
+}
 </script>
 <template>
-  <div>
-    <div ref="containerRef" class="container">
-      <!-- Sign Up Form -->
-      <div class="form-container sign-up-container">
-        <UiSignForm mode="login" />
-      </div>
+  <div ref="containerRef" class="container">
+    <div class="form-container sign-in-container">
+      <Transition name="fade-expand">
+        <UiSignForm mode="login" v-if="!signup" />
+        <UiSignForm mode="signup" v-else />
+      </Transition>
+    </div>
 
-      <!-- Sign In Form -->
-      <div class="form-container sign-in-container">
-        <UiSignForm mode="signup" />
-      </div>
-
-      <!-- Overlay Container -->
-      <div class="overlay-container">
-        <div class="overlay">
-          <!-- Overlay Left Panel -->
-          <div class="overlay-panel overlay-left">
-            <h1>Welcome Back! 🎉</h1>
-            <p>
-              To keep connected with us please login with your personal info
-            </p>
-            <button class="ghost" @click="handleSignIn">Sign In</button>
-          </div>
-
-          <!-- Overlay Right Panel -->
-          <div class="overlay-panel overlay-right">
-            <h1>Hello, Friend! ✨</h1>
-            <p>Enter your personal details and start your journey with us</p>
-            <button class="ghost" @click="handleSignUp">Sign Up</button>
-          </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>{{ $t('login.register.h2') }}</h1>
+          <p>{{ $t('login.register.p') }}</p>
+          <button class="ghost" @click="handleSignIn">
+            {{ $t('login.register.title') }}
+          </button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>{{ $t('login.login.h2') }}</h1>
+          <p>{{ $t('login.login.p') }}</p>
+          <button class="ghost" @click="handleSignUp">
+            {{ $t('login.login.title') }}
+          </button>
         </div>
       </div>
     </div>
-
-    <div class="copyright">@copyright by dipesh</div>
   </div>
 </template>
 
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+.fade-expand-enter-active,
+.fade-expand-leave-active {
+  transition: opacity 0.4s ease;
+}
 
+.fade-expand-enter-from,
+.fade-expand-leave-to {
+  opacity: 0;
+}
+
+.fade-expand-enter-to,
+.fade-expand-leave-from {
+  opacity: 1;
+}
 h1 {
   font-weight: bold;
   margin: 0;
-  font-size: 1.8em;
-  margin-bottom: 10px;
-}
-
-h1 span {
-  font-size: 0.9em;
-  margin-left: 5px;
+  font-size: 2.5rem;
 }
 
 p {
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 20px;
-  letter-spacing: 0.5px;
+  font-size: 1.6rem;
+  font-weight: 100;
+  line-height: 1.7rem;
+  letter-spacing: 0.05rem;
   margin: 20px 0 30px;
 }
 
 span {
-  font-size: 12px;
-  margin-bottom: 10px;
+  font-size: 1.4rem;
+  font-weight: 150;
 }
 
 a {
   color: #333;
-  font-size: 14px;
+  font-size: 1.4rem;
   text-decoration: none;
-  margin: 15px 0;
+  font-weight: 250;
   transition: color 0.3s ease;
 }
 
@@ -88,13 +89,13 @@ a:hover {
 }
 
 button {
-  border-radius: 20px;
-  border: 1px solid #ff4b2b;
-  background-color: #ff4b2b;
-  color: #ffffff;
-  font-size: 12px;
+  border-radius: $button-radius;
+  border: 1px solid $primary-color-dark;
+  background-color: $primary-color;
+  color: $font__color--dark;
+  font-size: 1.4rem;
   font-weight: bold;
-  padding: 12px 45px;
+  padding: $button-padding;
   letter-spacing: 1px;
   text-transform: uppercase;
   transition:
@@ -119,7 +120,8 @@ button.ghost {
 }
 
 button.ghost:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: $primary-color-light;
+  border-color: $primary-color-lighter;
 }
 
 form {
@@ -133,32 +135,17 @@ form {
   text-align: center;
 }
 
-input {
-  background-color: #eee;
-  border: none;
-  padding: 12px 15px;
-  margin: 8px 0;
-  width: 100%;
-  border-radius: 5px;
-  font-family: "Poppins", sans-serif;
-}
-
-input:focus {
-  outline: 2px solid #ff416c;
-  background-color: #fff;
-}
-
 .container {
   background-color: #fff;
-  border-radius: 10px;
+  border-radius: $border-radius;
   box-shadow:
     0 14px 28px rgba(0, 0, 0, 0.2),
     0 10px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
-  width: 768px;
-  max-width: 100%;
-  min-height: 520px;
+  width: 75%;
+  max-width: 80%;
+  min-height: 75%;
 }
 
 .form-container {
@@ -185,7 +172,7 @@ input:focus {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 50%;
+  width: 51%;
   height: 100%;
   overflow: hidden;
   transition: transform 0.6s ease-in-out;
@@ -193,13 +180,11 @@ input:focus {
 }
 
 .overlay {
-  background: #ff416c;
-  background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
-  background: linear-gradient(to right, #ff4b2b, #ff416c);
+  background: linear-gradient(to right, $primary-color, $primary-color-dark);
+  color: $font__color--dark;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
-  color: #ffffff;
   position: relative;
   left: -100%;
   height: 100%;
@@ -225,11 +210,12 @@ input:focus {
 }
 
 .overlay-left {
+  left: 9%;
   transform: translateX(0%);
 }
 
 .overlay-right {
-  right: 0;
+  right: 5%;
   transform: translateX(0%);
 }
 
@@ -242,7 +228,7 @@ input:focus {
 }
 
 .container.right-panel-active .sign-up-container {
-  transform: translateX(100%);
+  transform: translateX(0%);
   opacity: 1;
   z-index: 5;
   animation: show 0.6s;
@@ -283,52 +269,33 @@ input:focus {
   z-index: 1001;
 }
 
+/* Mobile Responsiveness Fixes */
 @media (max-width: 768px) {
   .container {
     width: 95%;
-    min-height: 500px;
+    min-height: 90%;
+    max-width: 95%;
   }
+
   .form-container {
     padding: 0 20px;
   }
+
   h1 {
     font-size: 1.6em;
   }
+
   .overlay-panel {
     padding: 0 20px;
   }
-}
 
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.4em;
-  }
-  button {
-    padding: 10px 30px;
-  }
-  input {
-    padding: 10px 12px;
-  }
-
-  .container {
-    min-height: 480px;
-  }
-  .copyright {
-    font-size: 0.7em;
-    bottom: 5px;
-    right: 10px;
-  }
-}
-@media (max-width: 768px) {
-  .container {
-    min-height: 90vh;
-    max-width: 90vw;
-  }
+  /* Mobile Layout Adjustments */
   .form-container {
-    width: 100% !important;
+    width: 100%;
     height: 50%;
-    left: 0 !important;
+    left: 0;
   }
+
   .overlay-container {
     width: 100%;
     height: 50%;
@@ -336,6 +303,7 @@ input:focus {
     left: 0;
     transform: translateY(0);
   }
+
   .overlay {
     width: 100%;
     height: 200%;
@@ -343,25 +311,60 @@ input:focus {
     left: 0;
     transform: translateY(0);
   }
+
   .overlay-panel {
     width: 100%;
     height: 50%;
     transform: translateY(0);
+    padding: 20px;
   }
+
   .overlay-left {
-    transform: translateY(-20%);
+    top: 0;
+    left: 0;
+    transform: translateY(200%);
   }
+
   .overlay-right {
-    transform: translateY(20%);
+    top: 50%;
+    left: 0;
+    right: auto;
+    transform: translateY(0);
   }
+
   .container.right-panel-active .sign-in-container {
     transform: translateY(100%);
   }
+
   .container.right-panel-active .sign-up-container {
     transform: translateY(100%);
   }
+
   .container.right-panel-active .overlay-container {
     transform: translateY(-100%);
+  }
+
+  .container.right-panel-active .overlay {
+    transform: translateX(0%);
+  }
+
+  .container.right-panel-active .overlay-left {
+    transform: translateY(100%);
+  }
+
+  .container.right-panel-active .overlay-right {
+    transform: translateY(-100%);
+  }
+
+  /* Adjust text sizes for mobile */
+  .overlay-panel h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+
+  .overlay-panel p {
+    font-size: 1.2rem;
+    margin: 10px 0 20px;
   }
 }
 </style>

@@ -1,1 +1,157 @@
+// assets/styles/_mixins.scss
+@use 'sass:map';
 
+@mixin responsive($size: 64rem) {
+  @media (width <= $size) {
+    @content;
+  }
+}
+@mixin themify($themes) {
+  @each $name, $values in $themes {
+    .#{$name} {
+      $theme-map: $values !global;
+      @content;
+    }
+  }
+}
+@function themed($key) {
+  @return map.get($theme-map, $key);
+}
+@mixin flex($direction: row, $align: center, $justify: center, $wrap: nowrap, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+  flex-wrap: $wrap;
+  gap: $gap;
+}
+@mixin opacityTransition($duration: 800ms) {
+  opacity: 0;
+    transform: scale(0.8) rotateZ('90');
+    transition:
+      opacity $duration ease,
+      transform $duration ease;
+  &.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+}
+@mixin skeleton() {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: var(--c-graphite);
+  transform: skewX(-40deg);
+  border-radius: 0.25em;
+  filter: brightness(1.5);
+  animation: shimmerEffect 1s infinite linear;
+
+  @keyframes shimmerEffect {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+@mixin loader() {
+  width: 4.125rem;
+  padding: 0.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--c-primary);
+  --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+
+  @keyframes l3 {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+@mixin swiperStyles(
+  $pagination-color: var(--c-primary),
+  $bullet-inactive-color: #999999,
+  $button-bg-color: var(--c-static-white),
+  $button-hover-bg-color: var(--c-grey-light),
+  $button-size: 2.5em,
+  $button-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.3)
+) {
+  --swiper-pagination-color: #{$pagination-color};
+  --swiper-pagination-bullet-inactive-color: #{$bullet-inactive-color};
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-pagination-bullet-size: 1rem;
+  --swiper-pagination-bullet-horizontal-gap: 0.375rem;
+  --swiper-button-next-disabled-display: none;
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    background-color: $button-bg-color;
+    border-radius: 50%;
+    padding: 0.5em;
+    width: $button-size;
+    height: $button-size;
+    box-shadow: $button-shadow;
+
+    &::after {
+      font-size: 0.8em;
+      font-weight: 900;
+      color: var(--c-static-black);
+    }
+
+    &:hover {
+      background-color: $button-hover-bg-color;
+      color: var(--c-static-white);
+    }
+  }
+
+  .swiper-button-disabled {
+    display: none;
+  }
+}
+
+@mixin simpleBox() {
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  background-color: var(--c-black);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+@mixin clampText($lines: 1) {
+  display: -webkit-box;
+  line-clamp: $lines;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@mixin blob() {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 23rem;
+  height: 22em;
+  border-radius: 50%;
+  background: var(--c-primary);
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(3.5rem);
+  transform: translate(-50%, -50%);
+  transition: opacity 300ms ease-in-out;
+  @include responsive() {
+    width: 16rem;
+    height: 16rem;
+  }
+}
+@mixin fakeblob() {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}

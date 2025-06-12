@@ -1,13 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: "content-center",
-});
+  layout: 'content-center',
+})
 </script>
 
 <template>
-  <section class="card__container">
-    <TheLogin />
-  </section>
+  <section class="card__container"><TheLogin /></section>
 </template>
 
 <style lang="scss" scoped>

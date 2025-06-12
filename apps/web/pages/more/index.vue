@@ -1,29 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-
-const config = useRuntimeConfig()
-
-const { data: fieldsRaw } = await $fetch(
-  `${config.public.STRAPI_URL}/api/fields-of-studies?populate=bookCover`,
-  {
-    headers: {
-      Authorization: `Bearer ${config.public.STRAPI_TOKEN}`,
-    },
-  },
-)
-
-const expandedCard = ref<number | null>(null)
-const searchQuery = ref('')
-
-const toggleExpand = (index: number) => {
-  expandedCard.value = expandedCard.value === index ? null : index
-}
-
-const filteredFields = computed(() => {
-  return fieldsRaw?.filter((field: unknown) =>
-    field.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  )
-})
+const {
+  fields,
+  filteredFields,
+  searchQuery,
+  expandedCard,
+  toggleExpand,
+  isSubscribed,
+  subscribe,
+  unsubscribe,
+  config,
+} = await useFieldsOfStudy()
 </script>
 
 <template>
@@ -59,47 +45,106 @@ const filteredFields = computed(() => {
               {{ field.description?.[0]?.children?.[0]?.text }}
             </p>
           </div>
+
+          <!-- Botones -->
+          <div class="mt-4">
+            <button
+              v-if="!isSubscribed(field.id)"
+              class="subscribe-btn"
+              @click.stop="subscribe(field.id)"
+            >
+              Subscribirse
+            </button>
+            <button v-else class="unsubscribe-btn" @click.stop="unsubscribe(field.id)">
+              Desubscribirse
+            </button>
+          </div>
         </div>
       </div>
     </TransitionGroup>
   </section>
 
-  <IconsLoadingIcon v-else />
+  <IconsLoadingIcon status="1" v-else />
 </template>
 
 <style lang="scss" scoped>
+@include themify($themes) {
+  .card {
+    background-color: themed('primary');
+    .card-body {
+      background-color: themed('tertiary');
+      h3 {
+        color: themed('text');
+      }
+      .description {
+        color: themed('text');
+      }
+    }
+  }
+  .fields-container {
+    h1 {
+      color: themed('text');
+    }
+
+    .subtitle {
+      color: themed('text');
+    }
+    .search-bar {
+      border: 0.2rem dotted themed('primary');
+
+      color: themed('text');
+      &::placeholder {
+        color: themed('text');
+      }
+    }
+  }
+  .subscribe-btn,
+  .unsubscribe-btn {
+    background-color: themed('secondary');
+    color: themed('text');
+    &:hover {
+      background-color: themed('primary');
+      color: themed('secondary');
+    }
+  }
+
+  .unsubscribe-btn {
+    color: rgb(190, 49, 49);
+  }
+}
+.subscribe-btn,
+.unsubscribe-btn {
+  padding: $button-padding;
+  border-radius: $button-radius;
+  transition: all 0.2s ease;
+}
+
 .fields-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 2rem;
 
   h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 700;
-    color: #ffffff;
+
     margin-bottom: 0.25rem;
   }
 
   .subtitle {
     font-size: 1.2rem;
-    color: #dcdcdc;
+
     margin-bottom: 1rem;
   }
 
   .search-bar {
     width: 100%;
-    max-width: 400px;
+
     padding: 0.8rem 1rem;
     margin: 1rem 0 2rem;
     font-size: 1rem;
-    border: none;
-    border-radius: 8px;
-    background: #ffffff22;
-    color: #fff;
 
-    &::placeholder {
-      color: #cccccc;
-    }
+    border-radius: 8px;
   }
 }
 
@@ -116,7 +161,7 @@ const filteredFields = computed(() => {
 }
 
 .card {
-  background-color: #1a1a1a;
+  background-color: $primary-color-dark;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -135,13 +180,13 @@ const filteredFields = computed(() => {
   .card-body {
     width: 100%;
     padding: 1.5rem;
-    background: #ffffff11;
+    background: $primary-color-light;
     text-align: center;
     transition: background 0.3s ease;
 
     h3 {
       font-size: 1.4rem;
-      color: #fff;
+      color: $primary-color-dark;
       margin-bottom: 0.75rem;
     }
 
@@ -154,7 +199,7 @@ const filteredFields = computed(() => {
 
     .description {
       font-size: 1rem;
-      color: #e2e2e2;
+      color: $primary-color-dark;
       line-height: 1.5;
       margin-top: 0.5rem;
       white-space: pre-wrap;

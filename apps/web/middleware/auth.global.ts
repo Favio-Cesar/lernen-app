@@ -1,17 +1,17 @@
-export default defineNuxtRouteMiddleware((to) => {
-  if (import.meta.client) {
-    const jwt = localStorage.getItem('jwt')
+export default defineNuxtRouteMiddleware(async (to) => {
+  if (import.meta.server) return
 
-    console.log('JWT en localStorage:', jwt)
+  const authStore = useAuthStore()
+  const { isLoggedIn } = storeToRefs(authStore)
 
-    if (!jwt && to.path !== '/login') {
-      console.log('Redirigiendo a /login')
-      return navigateTo('/login')
-    }
+  await authStore.checkAuth()
 
-    if (jwt && to.path === '/login') {
-      console.log('Redirigiendo al home desde login')
-      return navigateTo('/')
-    }
+  const adminRoutes = ['user']
+  const name = to.matched[0].name
+  const pagina = typeof name === 'string' ? name.split('___')[0] : ''
+  console.log('Middleware check:', isLoggedIn.value)
+
+  if (adminRoutes.includes(pagina) && !isLoggedIn.value) {
+    return navigateTo('/')
   }
 })

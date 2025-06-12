@@ -399,26 +399,40 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   options: {
     draftAndPublish: true
   }
+  pluginOptions: {
+    i18n: {
+      localized: true
+    }
+  }
   attributes: {
     author: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>
-    blocks: Schema.Attribute.DynamicZone<
-      ['shared.media', 'shared.quote', 'shared.rich-text', 'shared.slider']
-    >
-    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>
-    cover: Schema.Attribute.Media<'images' | 'files' | 'videos'>
+    cover: Schema.Attribute.Media<'images' | 'files' | 'videos'> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true
+        }
+      }>
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private
-    description: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 80
+    info: Schema.Attribute.Blocks &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true
+        }
       }>
-    locale: Schema.Attribute.String & Schema.Attribute.Private
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::article.article'> &
-      Schema.Attribute.Private
+    locale: Schema.Attribute.String
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>
     publishedAt: Schema.Attribute.DateTime
     slug: Schema.Attribute.UID<'title'>
-    title: Schema.Attribute.String
+    title: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true
+        }
+      }>
+    topic: Schema.Attribute.Relation<'manyToOne', 'api::topic.topic'>
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private
@@ -496,38 +510,10 @@ export interface ApiBlockBlock extends Struct.CollectionTypeSchema {
   }
 }
 
-export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
-  collectionName: 'categories'
-  info: {
-    description: 'Organize your content into categories'
-    displayName: 'Category'
-    pluralName: 'categories'
-    singularName: 'category'
-  }
-  options: {
-    draftAndPublish: false
-  }
-  attributes: {
-    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>
-    createdAt: Schema.Attribute.DateTime
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private
-    description: Schema.Attribute.Text
-    locale: Schema.Attribute.String & Schema.Attribute.Private
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::category.category'> &
-      Schema.Attribute.Private
-    name: Schema.Attribute.String
-    publishedAt: Schema.Attribute.DateTime
-    slug: Schema.Attribute.UID
-    updatedAt: Schema.Attribute.DateTime
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private
-  }
-}
-
 export interface ApiExerciseExercise extends Struct.CollectionTypeSchema {
   collectionName: 'exercises'
   info: {
+    description: ''
     displayName: 'Exercise'
     pluralName: 'exercises'
     singularName: 'exercise'
@@ -554,6 +540,7 @@ export interface ApiExerciseExercise extends Struct.CollectionTypeSchema {
           localized: true
         }
       }>
+    topic: Schema.Attribute.Relation<'manyToOne', 'api::topic.topic'>
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private
@@ -593,29 +580,33 @@ export interface ApiFieldsOfStudyFieldsOfStudy extends Struct.CollectionTypeSche
           localized: true
         }
       }>
-    iconCover: Schema.Attribute.Media<'images'> &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true
-        }
-      }>
+    iconCover: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'fa fa-question-circle'>
     locale: Schema.Attribute.String
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::fields-of-study.fields-of-study'
     >
+    longTitle: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true
+        }
+      }>
     publishedAt: Schema.Attribute.DateTime
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
-          localized: true
+          localized: false
         }
       }>
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private
+    users: Schema.Attribute.Relation<'manyToMany', 'plugin::users-permissions.user'>
   }
 }
 
@@ -651,6 +642,7 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
 export interface ApiTopicTopic extends Struct.CollectionTypeSchema {
   collectionName: 'topics'
   info: {
+    description: ''
     displayName: 'Topic'
     pluralName: 'topics'
     singularName: 'topic'
@@ -664,9 +656,12 @@ export interface ApiTopicTopic extends Struct.CollectionTypeSchema {
     }
   }
   attributes: {
+    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private
+    description: Schema.Attribute.String
+    exercises: Schema.Attribute.Relation<'oneToMany', 'api::exercise.exercise'>
     locale: Schema.Attribute.String
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::topic.topic'>
     publishedAt: Schema.Attribute.DateTime
@@ -1105,7 +1100,6 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
   }
   options: {
     draftAndPublish: false
-    timestamps: true
   }
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
@@ -1119,6 +1113,10 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6
       }>
+    fields_of_studies: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::fields-of-study.fields-of-study'
+    >
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1160,7 +1158,6 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle
       'api::author.author': ApiAuthorAuthor
       'api::block.block': ApiBlockBlock
-      'api::category.category': ApiCategoryCategory
       'api::exercise.exercise': ApiExerciseExercise
       'api::fields-of-study.fields-of-study': ApiFieldsOfStudyFieldsOfStudy
       'api::global.global': ApiGlobalGlobal

@@ -1,5 +1,8 @@
-@use 'reset.scss';
+@use "sass:color";
+@use "@/assets/styles/variables" as *;
+@use "@/assets/styles/themes" as *;
+@use "@/assets/styles/mixins" as *;
 body {
-  background-color: $background__color--dark;
+  background-color: $tertiary-color-light;
   font-family: Arial, sans-serif;
 }

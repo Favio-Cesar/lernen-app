@@ -14,6 +14,7 @@ export function useCookies() {
       }
       cookiesAccepted.value = null
     }
+    console.log(cookiesAccepted, ' aa ', cookies)
   }
 
   return { cookiesAccepted, setCookiesAccepted, checkCookiesAccepted }
