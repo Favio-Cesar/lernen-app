@@ -116,7 +116,6 @@ defineProps<{
     <div class="text" data-text="Searching"></div>
   </div>
 
-  <!--- ## DRIBBBLE + TWITTER ############# -->
   <div class="socials">
     <a
       class="dribbble"

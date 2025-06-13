@@ -1,9 +1,9 @@
-// composables/useFieldNavigation.ts
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useCookie, useStrapi } from '#imports'
 import type { FieldOfStudy } from '~/interfaces/strapi/fields-of-studies'
+import type { StrapiLocale } from '@nuxtjs/strapi'
 
 export function useFieldNavigation() {
   const { t, locale } = useI18n()
@@ -28,7 +28,10 @@ export function useFieldNavigation() {
         populate: ['fields_of_studies'],
       })
 
-      const fieldIds = userResponse.fields_of_studies?.map((f: any) => f.documentId)
+      const userData = userResponse.data ?? userResponse
+      const fieldIds = (userData as { fields_of_studies?: any[] }).fields_of_studies?.map(
+        (f: any) => f.documentId,
+      )
 
       if (!fieldIds || fieldIds.length === 0) return
 
@@ -38,7 +41,7 @@ export function useFieldNavigation() {
             $in: fieldIds,
           },
         },
-        locale: localeCode,
+        locale: localeCode as StrapiLocale,
         publicationState: 'live',
       })
 
@@ -49,7 +52,7 @@ export function useFieldNavigation() {
             index === self.findIndex((i) => i.documentId === item.documentId),
         )
 
-      fields.value = cleanFields
+      fields.value = cleanFields as FieldOfStudy[]
 
       navItems.value = [
         ...cleanFields.map((field: any) => ({
@@ -62,7 +65,7 @@ export function useFieldNavigation() {
           path: '/more',
           title: t('more'),
           longTitle: t('more'),
-          icon: 'fas fa-book', // o cualquier ícono que prefieras
+          icon: 'fas fa-book',
         },
       ]
     } catch (error) {

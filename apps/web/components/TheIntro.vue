@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const left = useTransition()
 const right = useTransition()
+const authStore = useAuthStore()
+
+const { isLoggedIn } = storeToRefs(authStore)
 </script>
 
 <template>
@@ -17,7 +20,7 @@ const right = useTransition()
             <span :key="$i18n.locale">{{ $t('home.intro.p_left') }}</span>
           </Transition>
         </p>
-        <a href="#explore" class="intro__button intro__button--yellow">
+        <a href="#explore" class="intro__button intro__button--yellow" v-if="!isLoggedIn">
           <Transition name="text" mode="out-in">
             <span :key="$i18n.locale">{{ $t('home.intro.button_left') }}</span>
           </Transition>
@@ -37,7 +40,7 @@ const right = useTransition()
             <span :key="$i18n.locale">{{ $t('home.intro.p_right') }}</span>
           </Transition>
         </p>
-        <a href="/login" class="intro__button intro__button--dark">
+        <a href="/login" class="intro__button intro__button--dark" v-if="!isLoggedIn">
           <Transition name="text" mode="out-in">
             <span :key="$i18n.locale">{{ $t('home.intro.button_right') }}</span>
           </Transition>
@@ -76,18 +79,18 @@ const right = useTransition()
   }
 
   &__content {
-    max-width: 25rem;
+    max-width: 45rem;
     text-align: left;
     @include opacityTransition;
     h2 {
-      font-size: 2.5rem;
+      font-size: 3.5rem;
       font-weight: bold;
       margin-bottom: 1rem;
       line-height: 1.2;
     }
 
     p {
-      font-size: 1rem;
+      font-size: 2rem;
       line-height: 1.6;
       margin-bottom: 2rem;
       color: inherit;

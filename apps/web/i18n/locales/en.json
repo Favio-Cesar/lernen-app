@@ -39,6 +39,10 @@
       "h2": "Embrace the future of digital learning",
       "p": "Get your free account now and start working on your personal growth.",
       "button": "Join now"
+    },
+    "article": {
+      "title": "Articles",
+      "description": "Discover interesting articles and learn something new every day."
     }
   },
   "login": {
@@ -59,5 +63,19 @@
       "username": "Username"
     },
     "forgot_password": "Forgot your password?"
-  }
+  },
+  "more": {
+    "title": "Fields of Study",
+    "title_s": "More",
+    "description": "Explore the fields of study we offer on our platform.",
+    "search": "Search by title"
+  },
+  "cookies": {
+    "cookies_text": "Accept cookies?",
+    "more_info": "More information",
+    "accept_cookies": "Accept"
+  },
+  "maths": "Maths",
+  "physics": "Physics",
+  "workbook": "Workbook"
 }

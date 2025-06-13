@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 const containerRef = ref<HTMLElement | null>(null)
 const signup = ref(true)
 const handleSignUp = () => {

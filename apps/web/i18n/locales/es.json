@@ -64,9 +64,18 @@
     },
     "forgot_password": "¿Olvidaste tu contraseña?"
   },
+  "more": {
+    "title": "Campos de estudio",
+    "title_s": "Más",
+    "description": "Explora los campos de estudio que ofrecemos en nuestra plataforma.",
+    "search": "Buscar por titulo"
+  },
   "cookies": {
-    "text": "Aceptar cookies?",
+    "cookies_text": "Aceptar cookies?",
     "more_info": "Más información",
     "accept_cookies": "Aceptar"
-  }
+  },
+  "maths": "Matematicas",
+  "physics": "Fisica",
+  "workbook": "Cuaderno"
 }

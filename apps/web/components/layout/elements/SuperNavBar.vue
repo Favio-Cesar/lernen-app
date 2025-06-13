@@ -1,24 +1,22 @@
 <script setup lang="ts">
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-    validator: (val) => val.every((item) => 'path' in item && 'title' in item),
-  },
-  basePath: {
-    type: String,
-    default: '/',
-  },
-  inverted: {
-    type: Boolean,
-    default: false,
-  },
-})
+interface NavbarItem {
+  path: string
+  title: string
+  [key: string]: any
+}
+
+interface NavbarProps {
+  items: NavbarItem[]
+  basePath?: string
+  inverted?: boolean
+}
+
+const props = defineProps<NavbarProps>()
 
 const route = useRoute()
 const isMenuOpen = ref(false)
 const activeIndex = ref(1)
-const navbarRef = ref(null)
+const navbarRef = ref<HTMLElement | null>(null)
 const { fullPaths, isActive } = useNavbarPaths(props)
 
 const selectorStyle = reactive({
@@ -36,8 +34,8 @@ const updateSelector = () => {
     const navbar = navbarRef.value
 
     if (activeElement && navbar) {
-      const elementLeft = activeElement.offsetLeft
-      const elementWidth = activeElement.offsetWidth
+      const elementLeft = (activeElement as HTMLElement).offsetLeft
+      const elementWidth = (activeElement as HTMLElement).offsetWidth
 
       Object.assign(selectorStyle, {
         left: `${elementLeft}px`,
@@ -46,7 +44,7 @@ const updateSelector = () => {
     }
   })
 }
-const setActive = (index) => {
+const setActive = (index: number) => {
   activeIndex.value = index
   isMenuOpen.value = false
   nextTick(updateSelector)

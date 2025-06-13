@@ -1,8 +1,6 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { LayoutElementsSuperNavBar } from '#components'
 import SuperNavBar from '~/components/layout/elements/SuperNavBar.vue'
-import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -10,11 +8,12 @@ const authStore = useAuthStore()
 
 const { isLoggedIn } = storeToRefs(authStore)
 
-const navItems = ref([
+const navItems = computed(() => [
   { path: '/maths', title: t('maths'), icon: 'fas fa-square-root-alt' },
   { path: '/physics', title: t('physics'), icon: 'fas fa-atom' },
-  { path: '/more', title: t('more'), icon: 'fa fa-plus' },
+  { path: '/more', title: t('more.title'), icon: 'fa fa-plus' },
 ])
+
 const basePath = ref('/')
 
 const shouldShowSelector = computed(() => !route.path.includes('/more'))
@@ -25,14 +24,13 @@ const { isMobile, isTablet, isDesktop } = useDevice()
   <div>
     <nav class="navbar navbar-mainbg" v-if="isLoggedIn">
       <div class="navbar navbar-collapse navbar-supported-content">
-        <SuperNavBar :items="navItems" :base-path="basePath" is-sub-nav />
+        <LayoutElementsSuperNavBar :items="navItems" :base-path="basePath" is-sub-nav />
         <Transition name="fade-expand">
-          <SuperNavBar
+          <LayoutElementsSuperNavBar
             v-show="shouldShowSelector"
             :items="[
-              { path: '', title: 'home', icon: 'fas fa-book' },
-              { path: 'workbook', title: 'Workbook', icon: 'fas fa-book' },
-              { path: 'resources', title: 'Resources', icon: 'fas fa-box-open' },
+              { path: '', title: $t('more.title_s'), icon: 'fas fa-book' },
+              { path: 'workbook', title: $t('workbook'), icon: 'fas fa-book' },
             ]"
             :base-path="basePath"
             is-sub-nav
@@ -149,7 +147,7 @@ const { isMobile, isTablet, isDesktop } = useDevice()
   ul li a {
     color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
-    font-size: 15px;
+    font-size: 1.2rem;
     display: block;
     padding: 1rem 1rem 0rem 1rem;
     transition-duration: 0.6s;

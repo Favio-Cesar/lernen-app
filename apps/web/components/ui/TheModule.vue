@@ -1,129 +1,25 @@
-<template>
-  <div class="module">
-    <div class="toolbar">
-      <button @click="$emit('duplicate')" title="Duplicar módulo">➕</button>
-      <button @click="chatVisible = true" title="Abrir chat">💬</button>
-      <button
-        @click="exercisesVisible = true"
-        title="Mostrar ejercicios"
-        :disabled="selectedExercise !== null"
-      >
-        📚
-      </button>
-      <button @click="$emit('close')" title="Cerrar módulo">❌</button>
-      <button @click="clearCanvas" title="Borrar dibujo">🧹</button>
-    </div>
-
-    <div class="body">
-      <textarea class="text-area" placeholder="Escribe aquí..."></textarea>
-      <canvas ref="canvas" class="canvas"></canvas>
-
-      <!-- Mostrar ejercicio seleccionado con botón para borrar -->
-      <div v-if="selectedExercise" class="selected-exercise">
-        <strong>Ejercicio seleccionado:</strong>
-        <span v-html="renderedSelectedTitle"></span>
-
-        <button @click="removeExercise" title="Quitar ejercicio">❌</button>
-      </div>
-    </div>
-
-    <!-- Modal Chat -->
-    <Transition name="fade-scale">
-      <div v-if="chatVisible" class="chat-modal">
-        <div class="chat-header">
-          <span>Chat</span>
-          <button @click="chatVisible = false">✖</button>
-        </div>
-        <div class="chat-messages">
-          <div v-for="(msg, i) in messages" :key="i" class="chat-message">
-            {{ msg }}
-          </div>
-        </div>
-        <input
-          v-model="newMsg"
-          @keyup.enter="sendMessage"
-          placeholder="Escribe un mensaje..."
-        />
-      </div>
-    </Transition>
-
-    <!-- Modal Exercises -->
-    <Transition name="fade-scale">
-      <div v-if="exercisesVisible" class="chat-modal">
-        <div class="chat-header">
-          <span>Lista de Ejercicios</span>
-          <button @click="exercisesVisible = false">✖</button>
-        </div>
-        <div class="chat-messages">
-          <div v-if="loading">Cargando...</div>
-          <div v-else>
-            <div v-if="exercises.length === 0">No hay ejercicios disponibles.</div>
-            <ul>
-              <li v-for="exercise in exercises" :key="exercise.id">
-                <!-- Botón para seleccionar ejercicio -->
-                <button @click="selectExercise(exercise)">
-                  {{ exercise.title }}
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </div>
-</template>
-
 <script setup>
-import { ref, watch } from 'vue'
-import katex from 'katex'
+import { Ollama } from 'ollama'
 import 'katex/dist/katex.min.css'
 
-// Función para renderizar LaTeX a HTML usando KaTeX
-function renderLatex(latexString, displayMode = true) {
-  try {
-    return katex.renderToString(latexString, {
-      throwOnError: false,
-      displayMode,
-    })
-  } catch {
-    return latexString
-  }
-}
-
-const emit = defineEmits(['duplicate', 'close'])
 const selectedExercise = ref(null)
 const renderedSelectedLatex = ref('')
-const renderedSelectedTitle = ref('')
-// Cuando cambie selectedExercise renderizamos sólo la parte LaTeX
+
 watch(selectedExercise, (newVal) => {
   if (newVal) {
-    // Separamos texto y latex
-    const [renderedSelectedTitle.value, renderedSelectedLatex] = splitTextAndLatex(newVal.title)
-    // Renderizamos sólo la parte latex
-    renderedSelectedLatex.value = latex ? renderLatex(latex, false) : newVal.title
+    renderedSelectedLatex.value = renderLatex(newVal.title)
   } else {
     renderedSelectedLatex.value = ''
   }
 })
-
 const canvas = ref(null)
 const chatVisible = ref(false)
 const exercisesVisible = ref(false)
-const messages = ref(['Hola, ¿en qué puedo ayudarte?'])
 const newMsg = ref('')
 let ctx
 
 const exercises = ref([])
 const loading = ref(false)
-
-const config = useRuntimeConfig()
-
-const sendMessage = () => {
-  if (newMsg.value.trim()) {
-    messages.value.push(newMsg.value)
-    newMsg.value = ''
-  }
-}
 
 const { find } = useStrapi()
 
@@ -152,13 +48,11 @@ watch(exercisesVisible, (newVal) => {
   }
 })
 
-// Función para seleccionar ejercicio y cerrar modal
 const selectExercise = (exercise) => {
   selectedExercise.value = exercise
   exercisesVisible.value = false
 }
 
-// Función para quitar ejercicio seleccionado y reactivar botón
 const removeExercise = () => {
   selectedExercise.value = null
 }
@@ -201,7 +95,151 @@ onMounted(() => {
     lastY = e.offsetY
   })
 })
+
+const ollama = new Ollama({ host: 'http://localhost:11434' })
+const AI_MODEL = 'gemma3:4b'
+const loadingResponse = ref(false)
+const chatMessages = ref([])
+
+const renderMessageContent = (content) => {
+  return content.replace(/\n/g, '<br>')
+}
+
+const sendMessage = async () => {
+  if (!newMsg.value.trim() || loadingResponse.value) return
+
+  const userMessage = {
+    role: 'user',
+    content: newMsg.value,
+  }
+  chatMessages.value.push(userMessage)
+  newMsg.value = ''
+  loadingResponse.value = true
+
+  try {
+    const response = await ollama.chat({
+      model: AI_MODEL,
+      messages: chatMessages.value,
+      stream: false,
+      options: {
+        temperature: 0.7,
+        num_predict: 512,
+      },
+    })
+
+    if (response.message && response.message.content) {
+      chatMessages.value.push({
+        role: 'assistant',
+        content: response.message.content,
+      })
+    }
+  } catch (error) {
+    console.error('Error en la comunicación con Ollama:', error)
+    chatMessages.value.push({
+      role: 'assistant',
+      content:
+        'Lo siento, ocurrió un error al procesar tu solicitud. Por favor, inténtalo de nuevo.',
+    })
+  } finally {
+    loadingResponse.value = false
+
+    nextTick(() => {
+      const messagesContainer = document.querySelector('.chat-messages')
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight
+      }
+    })
+  }
+}
 </script>
+
+<template>
+  <div class="module">
+    <div class="toolbar">
+      <button @click="$emit('duplicate')" title="Duplicar módulo">➕</button>
+      <button @click="chatVisible = true" title="Abrir chat">💬</button>
+      <button
+        @click="exercisesVisible = true"
+        title="Mostrar ejercicios"
+        :disabled="selectedExercise !== null"
+      >
+        📚
+      </button>
+      <button @click="$emit('close')" title="Cerrar módulo">❌</button>
+      <button @click="clearCanvas" title="Borrar dibujo">🧹</button>
+    </div>
+
+    <div class="body">
+      <textarea class="text-area" placeholder="Escribe aquí..."></textarea>
+      <canvas ref="canvas" class="canvas"></canvas>
+
+      <div v-if="selectedExercise" class="selected-exercise">
+        <strong>Ejercicio seleccionado:</strong>
+        <span v-html="renderedSelectedLatex"></span>
+        <button @click="removeExercise" title="Quitar ejercicio">❌</button>
+      </div>
+    </div>
+
+    <!-- Modal Chat -->
+    <Transition name="fade-scale">
+      <div v-if="chatVisible" class="chat-modal">
+        <div class="chat-header">
+          <span>Chat con IA</span>
+          <button @click="chatVisible = false">✖</button>
+        </div>
+        <div class="chat-messages">
+          <div
+            v-for="(msg, i) in chatMessages"
+            :key="i"
+            class="chat-message"
+            :class="{ 'ai-message': msg.role === 'assistant' }"
+          >
+            <div v-if="msg.role === 'assistant'" class="ai-indicator">IA:</div>
+            <div v-else class="user-indicator">Tú:</div>
+            <div class="message-content" v-html="renderMessageContent(msg.content)"></div>
+          </div>
+          <div v-if="loadingResponse" class="chat-message ai-message">
+            <div class="ai-indicator">IA:</div>
+            <div class="message-content">Pensando...</div>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <input
+            v-model="newMsg"
+            @keyup.enter="sendMessage"
+            placeholder="Escribe un mensaje..."
+            :disabled="loadingResponse"
+          />
+          <button @click="sendMessage" :disabled="loadingResponse || !newMsg.trim()">
+            Enviar
+          </button>
+        </div>
+      </div>
+    </Transition>
+
+    <Transition name="fade-scale">
+      <div v-if="exercisesVisible" class="chat-modal">
+        <div class="chat-header">
+          <span>Lista de Ejercicios</span>
+          <button @click="exercisesVisible = false">✖</button>
+        </div>
+        <div class="chat-messages">
+          <div v-if="loading">Cargando...</div>
+          <div v-else>
+            <div v-if="exercises.length === 0">No hay ejercicios disponibles.</div>
+            <ul>
+              <li v-for="exercise in exercises" :key="exercise.id">
+                <button @click="selectExercise(exercise)">
+                  {{ exercise.title }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </div>
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/main.scss';

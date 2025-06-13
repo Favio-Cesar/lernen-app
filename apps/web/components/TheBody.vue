@@ -96,12 +96,12 @@ const title = useTransition()
   flex-direction: column;
   justify-content: center;
   &__subtitle {
-    font-size: 0.9rem;
+    font-size: 2.3rem;
     margin-bottom: 0.5rem;
   }
 
   &__title {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 700;
     margin-bottom: 1rem;
   }
@@ -109,7 +109,7 @@ const title = useTransition()
     @include opacityTransition;
   }
   &__description {
-    font-size: 1rem;
+    font-size: 1.7rem;
 
     margin-bottom: 3rem;
     max-width: 40rem;
@@ -126,7 +126,7 @@ const title = useTransition()
 
   &__card {
     flex: 1 1 250px;
-    max-width: 300px;
+    max-width: 25rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
     padding: 1.5rem;
@@ -141,10 +141,11 @@ const title = useTransition()
       font-weight: 600;
       margin-bottom: 1rem;
       font-family: 'Courier New', monospace;
+      font-size: 1.9rem;
     }
 
     p {
-      font-size: 0.95rem;
+      font-size: 1.5rem;
     }
   }
 }

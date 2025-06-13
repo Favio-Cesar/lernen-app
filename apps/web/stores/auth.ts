@@ -1,9 +1,9 @@
 export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(false)
   const jwt = useCookie('jwt')
-  const route = useRoute() // Nuxt composable para saber en qué ruta estás
+  const route = useRoute()
 
-  const adminRoutes = ['user'] // aquí defines tus rutas protegidas
+  const adminRoutes = ['user']
 
   const checkAuth = async () => {
     if (jwt.value) {

@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 const element = useTransition()
+const authStore = useAuthStore()
+
+const { isLoggedIn } = storeToRefs(authStore)
 </script>
 <template>
   <section class="conclusion">
@@ -20,11 +23,11 @@ const element = useTransition()
             <span :key="$i18n.locale">{{ $t('home.conclusion.p') }}</span>
           </Transition>
         </p>
-        <button class="conclusion__button">
+        <a href="/login" class="conclusion__button" v-if="!isLoggedIn">
           <Transition name="text" mode="out-in">
             <span :key="$i18n.locale">{{ $t('home.conclusion.button') }}</span>
           </Transition>
-        </button>
+        </a>
       </div>
 
       <div class="conclusion__image-wrapper">
@@ -77,7 +80,7 @@ const element = useTransition()
   }
 
   &__subtitle {
-    font-size: 0.95rem;
+    font-size: 1.45rem;
     margin-bottom: 0.5rem;
   }
 
@@ -89,7 +92,7 @@ const element = useTransition()
   }
 
   &__description {
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: #444;
     margin-bottom: 2rem;
   }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import TheArticles from '~/components/layout/elements/TheArticles.vue'
 import type { FieldOfStudy, StrapiResponse } from '~/interfaces/strapi/fields-of-studies'
 const { data: fieldsRaw } = await useStrapiFetch<StrapiResponse<FieldOfStudy>>(
   'fields-of-studies?populate=bookCover',
@@ -9,8 +8,8 @@ const authStore = useAuthStore()
 const { isLoggedIn } = storeToRefs(authStore)
 </script>
 <template>
-  <div v-if="!isLoggedIn">
-    <header class="header">
+  <div>
+    <header class="header" v-if="!isLoggedIn">
       <section class="header__half">
         <div class="header__title">
           <h1>LERNEN.IO</h1>
@@ -27,14 +26,7 @@ const { isLoggedIn } = storeToRefs(authStore)
               >
             </li>
             <li class="nav__item">
-              <a href="/about"
-                ><Transition name="text" mode="out-in">
-                  <span :key="$i18n.locale">{{ $t('home.header__nav.about') }}</span>
-                </Transition></a
-              >
-            </li>
-            <li class="nav__item">
-              <a href="/body">
+              <a href="#explore">
                 <Transition name="text" mode="out-in">
                   <span :key="$i18n.locale">{{ $t('home.header__nav.learning') }}</span>
                 </Transition>
@@ -62,13 +54,6 @@ const { isLoggedIn } = storeToRefs(authStore)
     <TheBody />
     <TheConclusion />
   </div>
-  <section v-else>
-    <div class="article">
-      <h2>{{ $t('home.article.title') }}</h2>
-      <p>{{ $t('home.article.description') }}</p>
-    </div>
-    <TheArticles />
-  </section>
 </template>
 
 <style scoped lang="scss">
@@ -76,24 +61,20 @@ const { isLoggedIn } = storeToRefs(authStore)
 
 @include themify($themes) {
   .header__half {
-    background-color: themed(
-      'secondary'
-    ); // fondo principal del header (light: casi blanco, dark: gris oscuro)
-    border-bottom: 1px solid themed('border'); // borde sutil para separar
+    background-color: themed('secondary');
+    border-bottom: 1px solid themed('border');
   }
   .header__half--other {
-    background-color: themed(
-      'tertiary'
-    ); // fondo secundario del header (gris claro o gris medio oscuro)
+    background-color: themed('tertiary');
   }
 
   .header__title h1 {
-    color: themed('text'); // título con color de acento para mejor visibilidad y estilo
+    color: themed('text');
   }
 
   .nav__item a {
-    color: themed('text'); // color del texto en navegación según tema
-    border: 0.1rem solid themed('border'); // borde sutil para los enlaces
+    color: themed('text');
+    border: 0.1rem solid themed('border');
     &:hover {
       background-color: themed('secondary');
       color: themed('text');

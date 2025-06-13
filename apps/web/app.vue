@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 const { cookiesAccepted, checkCookiesAccepted } = useCookies()
 
 const theme = ref('light')

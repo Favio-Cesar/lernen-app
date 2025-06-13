@@ -1,16 +1,10 @@
 <template>
   <div class="user-button">
-    <!-- Botón del usuario -->
     <button @click="toggleModal" class="icon-button" aria-label="User menu">
       <Icon name="heroicons-outline:user" class="user-icon" />
     </button>
-
-    <!-- Modal -->
     <div v-if="showModal" class="modal">
       <ul class="modal-list">
-        <li>
-          <NuxtLink to="/account" class="modal-option"> My Account </NuxtLink>
-        </li>
         <li>
           <button @click="handleLogout" class="modal-option">Cerrar sesión</button>
         </li>
@@ -33,6 +27,20 @@ function handleLogout() {
 }
 </script>
 <style scoped lang="scss">
+@include themify($themes) {
+  .user-button {
+    .modal {
+      background-color: themed('background');
+      border: 1px solid #ccc;
+      color: themed('text');
+    }
+    .modal-option {
+      &:hover {
+        background-color: themed('tertiary');
+      }
+    }
+  }
+}
 .user-button {
   position: relative;
   display: inline-block;
@@ -61,12 +69,6 @@ function handleLogout() {
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
     padding: 0.5rem;
     z-index: 1000;
-
-    // Tema oscuro opcional (si lo manejas con clases en body)
-    body.dark & {
-      background-color: #1f1f1f;
-      border-color: #444;
-    }
   }
 
   .modal-list {

@@ -14,14 +14,14 @@ const {
 
 <template>
   <section v-if="filteredFields" class="fields-container">
-    <h1>Fields of Study</h1>
-    <p class="subtitle">Explore the fields of study available in our platform.</p>
+    <h1>{{ $t('more.title') }}</h1>
+    <p class="subtitle">{{ $t('more.description') }}</p>
 
     <input
       v-model="searchQuery"
       class="search-bar"
       type="text"
-      placeholder="Search by title..."
+      :placeholder="$t('more.search')"
     />
 
     <TransitionGroup name="card" tag="div" class="card-grid">
@@ -45,8 +45,6 @@ const {
               {{ field.description?.[0]?.children?.[0]?.text }}
             </p>
           </div>
-
-          <!-- Botones -->
           <div class="mt-4">
             <button
               v-if="!isSubscribed(field.id)"

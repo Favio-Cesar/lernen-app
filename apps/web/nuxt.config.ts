@@ -64,4 +64,7 @@ export default defineNuxtConfig({
       STRAPI_TOKEN: process.env.STRAPI_TOKEN,
     },
   },
+  experimental: {
+    appManifest: false,
+  },
 })
